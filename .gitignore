@@ -1,0 +1,15 @@
+node_modules/
+dist/
+release/
+.env
+.env.*
+!.env.example
+private/
+local-data/
+*.pdf
+*.docx
+*.pptx
+*.zip
+*.log
+.DS_Store
+Thumbs.db
