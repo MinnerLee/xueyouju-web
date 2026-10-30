@@ -1,7 +1,7 @@
 # 贡献说明
 
 1. Fork 仓库并建立功能分支。
-2. 运行 `npm start`，修改界面或 `src/courses.js` 中的课程数据。
+2. 运行 `npm ci` 后 `npm start`，修改界面或 `src/courses.js` 中的课程数据。AI 需要在本机后台配置 `.env` 密钥。
 3. 新增知识点时，必须提供来源定位、适用条件、三级提示、完整解析、小测及答案说明。自编内容同步更新 `docs/original-notes.md`。
 4. 运行 `npm test` 和 `npm run build`；手动检查桌面与窄屏、提示展开、作答、刷新恢复与记录导出。
 5. 提交 Pull Request，说明问题、改动及验证方式。

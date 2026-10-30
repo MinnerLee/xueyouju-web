@@ -2,80 +2,53 @@
 
 **每一步理解，都有依据。**
 
-面向工科数学分析和 C 语言的开源助学网站，包含项目介绍和可操作的学习工作台。当前版本为 **v0.1 固定题库演示**：课程依据、三级提示、小测和本地记录均可使用，尚未接入模型 API、PDF 检索、账号或服务器数据库。
+面向工科数学分析与 C 语言的开源学习工作台。v0.2 增加后台接入 DeepSeek 的聊天助手，保留六个原创知识点、三级提示和固定规则小测。
+
+- [公开项目网站](https://minnerlee.github.io/xueyouju-web/)
+- [托管 AI 工作台](https://xueyouju-ai-minnerlee.minnerlee233.chatgpt.site/workspace/index.html#chat)：当前仅站点所有者登录后使用。
+- [源码与版本下载](https://github.com/MinnerLee/xueyouju-web)
 
 ## 运行
 
-需要 Node.js 22 或更新版本，无第三方依赖，无需 `npm install`。
+需要 Node.js 22 或更新版本。先运行 `npm ci`，复制 `.env.example` 为 `.env`，在本机文件中填写 `DEEPSEEK_API_KEY`，然后运行 `npm start`。
+
+打开 http://127.0.0.1:4173/#chat。Key 只由后台读取，不填写到网页。未配置密钥仍可浏览示例练习。环境文件不进入 Git、静态构建或发布包。
 
 ```sh
-npm start
+npm test          # 课程、聊天协议、权限、流式解析与记录测试
+npm run build     # 构建静态页面及第三方依赖
+npm run preview   # 预览 dist，同时启动本机 API
+npm run package   # 从干净的 Git HEAD 生成源码 ZIP
 ```
 
-打开终端输出的 `http://127.0.0.1:4173`。不要直接双击 HTML，浏览器的 ES Module 需要通过 HTTP 加载。
+## 功能
 
-```sh
-npm test          # 评分、课程数据、记录恢复测试
-npm run build    # 生成 dist 静态站点
-npm run preview  # 预览 dist
-npm run package  # 从已提交、干净的 Git 工作区生成源码 ZIP
-```
+- 三栏聊天工作台：多会话、流式对话、课程资料与笔记。
+- 引导学习、概念讲解、检查解答、针对练习、学习计划五种模式。
+- 多轮上下文、停止、重试、Markdown、LaTeX、复制回答、笔记与会话导出。
+- 会话、草稿、资料在当前浏览器保存；最多 30 个会话、每会话 40 轮。
+- 按课程匹配六个原创札记，显示实际依据，检查引用 ID。
+- 支持粘贴文字或导入 txt/md（最多 18000 字）；发送时交给后台与 DeepSeek。
+- 系统提示词、模型密钥放后台；前端可设置自建后台和临时访问口令。
+- 原有固定小测继续使用可复现规则评分，不以单次表现推断掌握程度。
 
-如果端口被占用，可设置 `PORT` 环境变量。预览服务只监听本机回环地址。
+尚未实现 PDF 全文检索、代码执行、联网工具、跨设备会话同步。AI 开放答案属于建议，需核验。
 
-## 当前功能
+## 目录与文档
 
-- 项目首页、课程入口、学习工作台、学习记录、项目说明。
-- 工科数学分析：连续与可导、极限与函数值、中值定理条件。
-- C 语言：循环边界、数组下标、值传递。
-- 每个知识点包含自编依据、三级提示、完整解析与一道迁移小测。
-- 自由思路可保存；不会假装对开放回答进行 AI 评分。
-- 小测选择题使用固定规则评分，一次练习只记一次结果，重新练习会建立新记录。
-- 记录区分独立答对、使用提示/解析答对、答错，并说明复练理由。
-- 数据只写入当前浏览器 localStorage，最多 500 次作答，支持 JSON 导出与清空。
-- 响应式布局、键盘操作、表单标签和减少动画偏好。
+| 文件 | 作用 |
+| --- | --- |
+| src/chat.js、src/chat.css | 聊天工作台和手机布局 |
+| src/chat-store.js、src/chat-render.js | 会话存储、清洗与公式 |
+| server/prompt.js | 完整学习助手提示词 |
+| server/chat.js、server/api.js | 模型代理、检索与访问控制 |
+| shared/sse.js | 共用流式解析 |
+| scripts/prepare-hosting.mjs | 生成独立 Sites 托管源码 |
 
-本项目不声称已验证学习效果，不以单次作答推断掌握程度。C 语言例子是明确标注的静态推演，不会执行用户代码。
+[助手说明](docs/ai-assistant.md) · [部署](docs/deployment.md) · [架构](docs/architecture.md) · [验证记录](docs/validation.md)
 
-## 目录
+## 资料与许可
 
-```text
-xueyouju-web/
-  index.html
-  assets/mark.svg
-  src/
-    app.js                 # 页面、事件和学习流程
-    courses.js             # 原创课程示例、确定性评分
-    storage.js             # 本地记录校验和持久化
-    styles.css
-  docs/
-    original-notes.md       # 可追溯的原创依据
-    materials.md            # 数学资料接入与范围说明
-    architecture.md         # 当前结构及后续扩展
-    deployment.md           # GitHub 发布步骤
-  scripts/                 # 零依赖开发、构建与打包脚本
-  tests/
-  .github/workflows/       # 检查与 Pages 部署
-```
+教材、题册和解析仅作本地参考，**不含在仓库或发布包，也未建立全文索引**。依据来自[原创札记](docs/original-notes.md)，不伪造教材页码。[资料范围](docs/materials.md)。
 
-## GitHub 与部署
-
-目标仓库：<https://github.com/MinnerLee/xueyouju-web>
-
-推送后在仓库 **Settings → Pages → Source** 选择 **GitHub Actions**，再运行 `Deploy website to GitHub Pages` 工作流。部署成功后的 URL 以 Actions 输出为准。详见 [部署说明](docs/deployment.md)。
-
-所有资源均使用相对路径，支持 GitHub Pages 的仓库子路径。也可以将 `dist/` 交给任意静态文件托管服务。
-
-## 课程资料与后续研发
-
-用户提供的教材、题册和解析仅作本地参考，**未收入代码仓库或发布包，也未建成检索索引**。网页中的依据全部来自 [自编学习札记](docs/original-notes.md)，不伪造教材页码。资料盘点和接入约定见 [资料说明](docs/materials.md)。
-
-后续可在保持课程数据结构的基础上增加 FastAPI、SQLite、课程检索和模型适配层。模型密钥必须保留在后端。先核验资料授权、公式和题目评分，再扩大题库。参考 [架构与路线图](docs/architecture.md)。
-
-## 参与贡献
-
-欢迎报告界面问题、课程示例错误与无障碍问题；提交方法见 [CONTRIBUTING.md](CONTRIBUTING.md)。请勿在 Issue、代码或附件中提交个人学习记录、凭据、教材全文或未经授权的试题。
-
-## 许可
-
-代码、本站图形及自编示例使用 [MIT License](LICENSE)。外部教材、试卷、第三方题册及其原有许可不因本仓库开源而改变。
+代码、图形和自编示例使用 [MIT](LICENSE)。Marked、DOMPurify、KaTeX 使用各自许可，构建时附带许可证。外部教材的权利不因源码开源而改变。[贡献指南](CONTRIBUTING.md)。
