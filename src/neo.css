@@ -98,9 +98,7 @@ body[data-page="home"] .site-header {
   justify-content: space-between;
   gap: 24px;
   border-bottom: 1px solid var(--nh-line);
-  background: color-mix(in srgb, var(--nh-bg) 88%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--nh-bg) 94%, transparent);
 }
 
 body[data-page="home"] .brand {
@@ -1311,10 +1309,8 @@ body[data-page="home"] .nh-hud em { font-size: 13px; }
 /* HUD：加半透明底，压在白板块上也读得清 */
 body[data-page="home"] .nh-hud {
   padding: 8px 12px;
-  background: rgba(3, 31, 100, 0.42);
+  background: rgba(3, 31, 100, 0.72);
   border-left: 3px solid var(--nh-red);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 /* 指针拖尾：一个小的红色楔形，跟在鼠标后面 */
@@ -1751,10 +1747,8 @@ body.neo .nh-hud {
   align-items: flex-end;
   gap: 6px;
   padding: 10px 14px 9px 16px;
-  background: rgba(3, 31, 100, 0.52);
+  background: rgba(3, 31, 100, 0.78);
   border-left: 3px solid var(--nh-red, #ff2b2b);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
   pointer-events: auto;
   font-family: var(--nh-cond, monospace);
   color: #fff;
