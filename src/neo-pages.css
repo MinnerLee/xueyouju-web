@@ -732,3 +732,30 @@ body.neo { background: var(--nh-bg); }
 
 /* 旧皮肤里 html 的背景来自 --paper，这里一并压掉 */
 html.neo body { background: var(--nh-bg); }
+
+/* ==========================================================================
+   动态背景层：Canvas 固定在最底层，内容整体上浮一层
+   ========================================================================== */
+body.neo .nh-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+}
+body.neo main,
+body.neo .site-footer { position: relative; z-index: 1; }
+
+/* 深色色块带半透明，让背景光带透上来 */
+body.neo[data-page="home"] .nh-process,
+body.neo[data-page="home"] .nh-proof { background: color-mix(in srgb, var(--nh-deep) 86%, transparent); }
+body.neo[data-page="home"] .nh-open-inner { background: color-mix(in srgb, var(--nh-deep) 92%, transparent); }
+body.neo[data-page="learn"] .panel,
+body.neo[data-page="records"] .stats,
+body.neo[data-page="records"] .record,
+body.neo[data-page="about"] .panel { backdrop-filter: blur(2px); }
+
+/* 命令条属于「菜单页」的 HUD，其它页面隐藏，避免压住内容 */
+body.neo:not([data-page="home"]) .nh-hud { display: none; }

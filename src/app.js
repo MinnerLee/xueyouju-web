@@ -2,6 +2,7 @@ import { courses, topics, getTopic, grade, recommendation } from './courses.js';
 import { readState, saveState, emptyState, STORAGE_KEY } from './storage.js';
 import { mountChat } from './chat.js';
 import { renderNeoHome, mountNeoHome, initNeoShell } from './neo-home.js';
+import { mountNeoBackground } from './neo-bg.js';
 
 const main = document.querySelector('main');
 let storage;
@@ -142,4 +143,5 @@ main.addEventListener('input', event => {
 
 window.addEventListener('hashchange', () => { if (location.hash === '#main') { main.focus(); return; } render(true); window.scrollTo(0, 0); });
 initNeoShell();
+mountNeoBackground();
 render();

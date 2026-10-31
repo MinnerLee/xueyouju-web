@@ -143,25 +143,49 @@ export function renderNeoHome() {
 
   <section class="nh-courses" aria-labelledby="nh-courses-title">
     <div class="nh-wrap">
-      <header class="nh-sec-head" data-reveal>
+      <header class="nh-menu-head" data-reveal>
         <div>
-          <span class="nh-eyebrow">EXPLORE THE COURSES</span>
+          <span class="nh-eyebrow">SELECT COURSE / COMMAND</span>
           <h2 class="nh-h2" id="nh-courses-title">选一门课，<br>从一个问题开始。</h2>
         </div>
         <p class="nh-sec-note">两门课程，一套学习方法。<br>当前开放 <b>6</b> 个自编知识点。</p>
       </header>
-      <div class="nh-course-grid">
-        ${courses.map((c, i) => `<a class="nh-course" href="#learn/${firstTopic(c.id)}" data-tone="${esc(c.color)}" data-tilt data-reveal style="--d:${i}">
-          <span class="nh-course-no" aria-hidden="true">0${i + 1}</span>
-          <div class="nh-course-top">
-            <span class="nh-course-sym" aria-hidden="true">${esc(c.symbol)}</span>
-            <span class="nh-course-tag">3 个知识点 · 可体验</span>
+
+      <div class="nh-menu-body">
+        <div class="nh-menu-list" id="nh-menu" role="listbox" aria-label="课程菜单" tabindex="0" data-reveal>
+          ${courses.map((c, i) => {
+            const count = topics.filter(t => t.courseId === c.id).length;
+            const first = firstTopic(c.id);
+            return `<a class="nh-menu-item${i === 0 ? ' is-active' : ''}" role="option" aria-selected="${i === 0}" tabindex="0"
+              href="#learn/${first}" data-index="${i}"
+              data-en="${esc(c.en)}" data-sym="${esc(c.symbol)}" data-title="${esc(c.title)}"
+              data-sub="${esc(c.subtitle)}" data-chapters="${esc(c.chapters)}" data-count="${count}">
+              <span class="nh-mi-no" aria-hidden="true">0${i + 1}</span>
+              <span class="nh-mi-text">
+                <span class="nh-mi-en">${esc(c.en)}</span>
+                <span class="nh-mi-label">${esc(c.title)}</span>
+              </span>
+              <span class="nh-mi-speed" aria-hidden="true"></span>
+            </a>`;
+          }).join('')}
+          <p class="nh-menu-hint" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> 选择 · <kbd>Enter</kbd> 进入</p>
+        </div>
+
+        <aside class="nh-menu-preview" data-reveal aria-live="polite">
+          <span class="nh-pv-ghost" aria-hidden="true" data-pv="ghost">MATH</span>
+          <div class="nh-pv-top">
+            <span class="nh-pv-sym" data-pv="sym">∂</span>
+            <span class="nh-pv-count"><b data-pv="count">3</b><small>KNOWLEDGE</small></span>
           </div>
-          <span class="nh-eyebrow">${esc(c.en)}</span>
-          <h3>${esc(c.title)}</h3>
-          <p>${esc(c.subtitle)}</p>
-          <div class="nh-course-foot"><span>${esc(c.chapters)}</span><span class="nh-arrow" aria-hidden="true">↗</span></div>
-        </a>`).join('')}
+          <span class="nh-pv-en" data-pv="en">ENGINEERING MATHEMATICS</span>
+          <h3 class="nh-pv-title" data-pv="title">工科数学分析</h3>
+          <p class="nh-pv-sub" data-pv="sub">从条件出发，把每一步推理说清楚。</p>
+          <dl class="nh-pv-meta">
+            <div><dt>CHAPTERS</dt><dd data-pv="chapters">极限与连续 / 导数 / 中值定理</dd></div>
+            <div><dt>STATUS</dt><dd>可体验 · 自编题库</dd></div>
+          </dl>
+          <span class="nh-pv-cta" aria-hidden="true">Ⓐ 进入课程 <i>→</i></span>
+        </aside>
       </div>
     </div>
   </section>
@@ -202,18 +226,13 @@ export function renderNeoHome() {
         <a class="nh-btn nh-btn-light" href="https://github.com/MinnerLee/xueyouju-web" target="_blank" rel="noopener noreferrer"><span>查看源代码</span><i aria-hidden="true">↗</i></a>
       </div>
     </div>
-  </section>
-
-  <div class="nh-hud" aria-hidden="true">
-    <strong>View / Explore</strong>
-    <span>Command</span>
-    <em>Ⓐ 打开　Ⓑ 返回</em>
-  </div>`;
+  </section>`;
 }
 
 /* ---------- 全站动效壳层（只初始化一次） ---------- */
 
 let shellReady = false;
+let sfx = null;
 
 export function initNeoShell() {
   if (shellReady) return;
@@ -242,6 +261,98 @@ export function initNeoShell() {
   document.body.classList.add('neo');
   if (!staticWipe) document.body.append(spot, layer, grain, vignette, wipe);
   else document.body.append(spot, layer, grain, vignette);
+
+  /* ---------- 游戏式 HUD：屏幕边框 + 底部命令条 + 音效开关 ---------- */
+  const frame = document.createElement('div');
+  frame.className = 'nh-frame';
+  frame.setAttribute('aria-hidden', 'true');
+  frame.innerHTML = '<i class="nh-frame-c tl"></i><i class="nh-frame-c tr"></i><i class="nh-frame-c bl"></i><i class="nh-frame-c br"></i><span class="nh-frame-tag">XUEYOUJU // STUDY SESSION</span>';
+  const hud = document.createElement('div');
+  hud.className = 'nh-hud';
+  hud.innerHTML = `
+    <div class="nh-hud-top"><strong class="nh-hud-title">View / Explore</strong><span class="nh-hud-sub">Command</span></div>
+    <div class="nh-hud-actions">
+      <button type="button" class="nh-hud-btn" data-sfx-toggle aria-pressed="true"><b aria-hidden="true">♪</b><span class="nh-hud-sfx-label">SFX ON</span></button>
+      <span class="nh-hud-hint">Ⓐ 打开　Ⓑ 返回</span>
+    </div>`;
+  document.body.append(frame, hud);
+
+  /* ---------- 菜单音效（WebAudio 合成，无音频文件） ---------- */
+  sfx = (() => {
+    let ctx = null;
+    let armed = false;
+    let on = true;
+    try { on = localStorage.getItem('xueyouju:sfx') !== 'off'; } catch { /* 默认开 */ }
+    const arm = () => { armed = true; };
+    window.addEventListener('pointerdown', arm, { once: true, passive: true });
+    window.addEventListener('keydown', arm, { once: true });
+    const ensure = () => {
+      if (!armed) return null;
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+      }
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      return ctx;
+    };
+    const tone = (freq, dur, type, gain, slideTo) => {
+      if (!on || isReduced) return;
+      const c = ensure();
+      if (!c) return;
+      const t = c.currentTime;
+      const osc = c.createOscillator();
+      const g = c.createGain();
+      osc.type = type || 'square';
+      osc.frequency.setValueAtTime(freq, t);
+      if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain || 0.03, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      osc.connect(g).connect(c.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.03);
+    };
+    return {
+      hover: () => tone(1180, 0.045, 'square', 0.018),
+      select: () => { tone(720, 0.05, 'square', 0.026, 980); },
+      confirm: () => { tone(880, 0.06, 'square', 0.03, 1320); window.setTimeout(() => tone(1320, 0.08, 'triangle', 0.024), 55); },
+      back: () => tone(520, 0.07, 'sawtooth', 0.022, 320),
+      get on() { return on; },
+      toggle() {
+        on = !on;
+        try { localStorage.setItem('xueyouju:sfx', on ? 'on' : 'off'); } catch { /* ignore */ }
+        if (on) tone(880, 0.06, 'square', 0.03);
+        return on;
+      }
+    };
+  })();
+
+  // 音效开关
+  const sfxBtn = hud.querySelector('[data-sfx-toggle]');
+  const sfxLabel = hud.querySelector('.nh-hud-sfx-label');
+  const syncSfx = () => {
+    if (!sfxBtn || !sfxLabel) return;
+    sfxBtn.setAttribute('aria-pressed', String(sfx.on));
+    sfxLabel.textContent = sfx.on ? 'SFX ON' : 'SFX OFF';
+    sfxBtn.classList.toggle('is-off', !sfx.on);
+  };
+  syncSfx();
+  sfxBtn?.addEventListener('click', () => { sfx.toggle(); syncSfx(); });
+
+  // 全局 hover / click 音效（只对可交互元素）
+  let lastHover = null;
+  document.addEventListener('pointerover', event => {
+    const el = event.target.closest('a, button, .nh-menu-item, .option, .topic-link, summary');
+    if (!el || el === lastHover) return;
+    lastHover = el;
+    sfx.hover();
+  }, { passive: true });
+  document.addEventListener('click', event => {
+    if (!event.target.closest('a, button, .nh-menu-item, .option, .topic-link, summary')) return;
+    sfx.confirm();
+  }, true);
+
 
   /* 鼠标跟随光斑 */
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduced()) {
@@ -473,7 +584,64 @@ export function mountNeoHome(main) {
   tickClock();
   const clockId = window.setInterval(tickClock, 1000);
 
-  // 7. 首屏波浪：hero 高度跟随视口（移动端浏览器地址栏）
+  // 7. 游戏式课程菜单：hover / 键盘切换选中项，右侧预览联动
+  const menu = main.querySelector('#nh-menu');
+  const menuItems = menu ? [...menu.querySelectorAll('.nh-menu-item')] : [];
+  const preview = main.querySelector('.nh-menu-preview');
+  const menuHandlers = [];
+  if (menu && menuItems.length) {
+    const pv = key => preview?.querySelector('[data-pv="' + key + '"]');
+    const ghostMap = { math: 'MATH', c: 'C / CODE' };
+    const setActive = (index, withSound) => {
+      menuItems.forEach((item, i) => {
+        const active = i === index;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      const item = menuItems[index];
+      if (!item || !preview) return;
+      const fields = {
+        sym: item.dataset.sym,
+        en: item.dataset.en,
+        title: item.dataset.title,
+        sub: item.dataset.sub,
+        chapters: item.dataset.chapters,
+        count: item.dataset.count,
+        ghost: ghostMap[item.href.includes('math') || item.dataset.en.includes('ENGINEERING') ? 'math' : 'c']
+      };
+      for (const [key, value] of Object.entries(fields)) {
+        const el = pv(key);
+        if (el && value != null) el.textContent = value;
+      }
+      if (withSound) sfx?.select();
+    };
+
+    menuItems.forEach((item, i) => {
+      const enter = () => setActive(i, false);
+      const focus = () => setActive(i, true);
+      item.addEventListener('pointerenter', enter);
+      item.addEventListener('focus', focus);
+      menuHandlers.push([item, 'pointerenter', enter], [item, 'focus', focus]);
+    });
+
+    const onKey = event => {
+      const current = menuItems.findIndex(item => item.classList.contains('is-active'));
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        const next = (current + (event.key === 'ArrowDown' ? 1 : -1) + menuItems.length) % menuItems.length;
+        setActive(next, true);
+        menuItems[next].focus({ preventScroll: true });
+      } else if (event.key === 'Enter' && document.activeElement === menu) {
+        event.preventDefault();
+        menuItems[current].click();
+      }
+    };
+    menu.addEventListener('keydown', onKey);
+    menuHandlers.push([menu, 'keydown', onKey]);
+    setActive(0, false);
+  }
+
+  // 8. 首屏波浪：hero 高度跟随视口（移动端浏览器地址栏）
   const setHeroHeight = () => root.style.setProperty('--nh-vh', `${window.innerHeight * 0.01}px`);
   setHeroHeight();
   window.addEventListener('resize', setHeroHeight);
@@ -486,6 +654,7 @@ export function mountNeoHome(main) {
     window.removeEventListener('scroll', onScroll);
     window.removeEventListener('pointermove', onPointer);
     window.removeEventListener('resize', setHeroHeight);
+    for (const [el, type, fn] of menuHandlers) el.removeEventListener(type, fn);
     for (const [el, move, leave] of tiltHandlers) {
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerleave', leave);
