@@ -1,6 +1,7 @@
 import { courses, topics, getTopic, grade, recommendation } from './courses.js';
 import { readState, saveState, emptyState, STORAGE_KEY } from './storage.js';
 import { mountChat } from './chat.js';
+import { renderNeoHome, mountNeoHome, initNeoShell } from './neo-home.js';
 
 const main = document.querySelector('main');
 let storage;
@@ -24,25 +25,13 @@ let state = loaded.state;
 let storageWarning = loaded.unavailable;
 let toastTimer;
 let disposeChat = null;
+let disposeNeo = null;
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 function persist() { if (!saveState(storage, state)) { storageWarning = true; toast('浏览器无法保存记录，本次内容仅在当前页面保留。'); } }
 function toast(message) { const el = document.querySelector('#toast'); el.textContent = message; el.classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('visible'), 3800); }
 function session(id) { return state.sessions[id] ||= { reflection: '', hintLevel: 0, solutionViewed: false, attemptId: null }; }
 function latest(id) { return state.attempts.findLast(a => a.topicId === id); }
 function tag(text, style = '') { return `<span class="tag ${style}">${text}</span>`; }
-
-function graph() {
-  return `<svg class="function-graph" viewBox="0 0 480 300" role="img" aria-label="绝对值函数图像：在原点连续，左右两边斜率不同"><defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M 32 0 L 0 0 0 32" fill="none" stroke="currentColor" stroke-opacity=".1"/></pattern></defs><rect width="480" height="300" fill="url(#grid)"/><g fill="none" stroke="#8eaaa1" stroke-width="1"><path d="M40 238H450m-10-5 10 5-10 5M240 275V20m-5 10 5-10 5 10"/></g><path d="M65 63 240 238 415 63" fill="none" stroke="#d9ee99" stroke-width="3.5" stroke-linecap="round"/><circle cx="240" cy="238" r="6" fill="#d9ee99"/><g fill="#d9ee99" font-family="Georgia,serif" font-size="21"><text x="310" y="49">f(x) = |x|</text><text x="248" y="260" font-size="15">0</text><text x="447" y="260" font-size="15">x</text><text x="252" y="29" font-size="15">y</text></g><g font-size="12" fill="#bfd1c8"><text x="57" y="159">左导数 −1</text><text x="331" y="193">右导数 +1</text></g></svg>`;
-}
-
-function home() {
-  return `<section class="hero wrap"><div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> 开源助学项目 / V0.2 AI 工作台</div><h1>每一步理解，<br>都有<span class="underline">依据。</span></h1><p class="hero-lead">从一个“为什么”开始。找到课程依据，<br class="desktop-break">沿着提示独立思考，再用一道新题检验理解。</p><div class="hero-actions"><a class="button primary" href="#chat">打开 AI 学习助手 <span>↗</span></a><a class="text-link" href="#about">了解项目 <span>→</span></a></div><div class="hero-note"><span>AI 由后台接入</span><i></i><span>记录保存在本机</span><i></i><span>MIT 开源</span></div></div>
-  <div class="hero-board"><div class="board-label"><span>一个值得想清楚的问题</span><span>01 / 数学分析</span></div><h2>连续，就一定可导吗？</h2>${graph()}<div class="board-footer"><span class="evidence-dot">有依据地思考</span><span>定义 → 反例 → 验证</span></div><div class="floating-note"><span>↳</span><div>先看条件，再下结论。<small>换个角度，理解就近了一步。</small></div></div></div></section>
-  <section class="process-band"><div class="wrap process"><div><span>01</span><strong>提出疑问</strong><small>从真正困惑的地方开始</small></div><b>→</b><div><span>02</span><strong>找到依据</strong><small>对照定义与适用条件</small></div><b>→</b><div><span>03</span><strong>尝试解释</strong><small>按需要，逐步展开提示</small></div><b>→</b><div><span>04</span><strong>小测复练</strong><small>用新的情境检验理解</small></div></div></section>
-  <section class="wrap section"><div class="section-heading"><div><div class="eyebrow">EXPLORE THE COURSES</div><h2>选一门课，从一个问题开始。</h2></div><p>两门课程，一套学习方法。<br>当前开放 6 个自编知识点示例。</p></div><div class="course-grid">${courses.map(c => `<a class="course-card ${c.color}" href="#learn/${topics.find(t => t.courseId === c.id).id}"><div class="course-top"><span class="course-symbol">${c.symbol}</span>${tag('3 个知识点 · 可体验')}</div><div class="eyebrow">${c.en}</div><h3>${c.title}</h3><p>${c.subtitle}</p><div class="course-bottom"><span>${c.chapters}</span><span class="circle-arrow">↗</span></div></a>`).join('')}</div></section>
-  <section class="wrap philosophy"><div><div class="eyebrow">LEARN WITH EVIDENCE</div><h2>把“看懂了”，<br>变成“我能解释”。</h2><p>学习不止于看到答案。留下你的思路，让每一次提示和作答都有迹可循。</p><a class="text-link" href="#learn/continuity">体验完整学习流程 →</a></div><ol class="principles"><li><span>01</span><div><h3>解释可以回到出处</h3><p>每个示例都关联自编札记中的具体章节，可以查看完整依据。</p></div></li><li><span>02</span><div><h3>帮助的深度，由你决定</h3><p>从检查条件到关键步骤，三级提示逐层展开，也可以主动查看解析。</p></div></li><li><span>03</span><div><h3>学习记录，有据可查</h3><p>区分独立答对与借助提示完成，给出下一次复练的理由。</p></div></li></ol></section>
-  <section class="wrap open-banner"><div><div class="eyebrow">BUILD IN THE OPEN</div><h2>一个持续生长的开源学习项目。</h2><p>已接入 DeepSeek 引导式对话，持续完善课程资料与可核验的反馈。</p></div><a class="button light" href="https://github.com/MinnerLee/xueyouju-web" target="_blank" rel="noopener noreferrer">查看源代码 ↗</a></section>`;
-}
 
 function learn(id) {
   const topic = getTopic(id) || topics[0];
@@ -69,11 +58,13 @@ function about() {
 
 function render(focus = false) {
   disposeChat?.(); disposeChat = null;
+  disposeNeo?.(); disposeNeo = null;
   const [page, id] = location.hash.slice(1).split('/');
   const view = ['chat', 'learn', 'records', 'about'].includes(page) ? page : 'home';
-  main.innerHTML = view === 'learn' ? learn(id) : view === 'records' ? records() : view === 'about' ? about() : home();
+  main.innerHTML = view === 'learn' ? learn(id) : view === 'records' ? records() : view === 'about' ? about() : renderNeoHome();
   document.body.dataset.page = view;
   if (view === 'chat') disposeChat = mountChat(main);
+  if (view === 'home') disposeNeo = mountNeoHome(main);
   document.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   document.title = `${{ home: '每一步理解，都有依据', chat: 'AI 学习助手', learn: '示例练习', records: '学习记录', about: '关于项目' }[view]} · 学有据`;
   if (focus) main.focus({ preventScroll: true });
@@ -150,4 +141,5 @@ main.addEventListener('input', event => {
 });
 
 window.addEventListener('hashchange', () => { if (location.hash === '#main') { main.focus(); return; } render(true); window.scrollTo(0, 0); });
+initNeoShell();
 render();

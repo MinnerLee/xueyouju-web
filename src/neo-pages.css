@@ -1,0 +1,716 @@
+/* ==========================================================================
+   NEO PAGES · 把「P3R 暂停菜单」皮肤铺到其余四个页面
+   （首页专用规则仍在 neo.css 里，本文件只处理全局壳层 + learn / records / about / chat）
+   ========================================================================== */
+
+/* ---------- 0. 全局令牌（与首页同源，供非首页复用） ---------- */
+body.neo {
+  --nh-display: "Neo Display", "Oswald", "Arial Black", sans-serif;
+  --nh-cond: "Neo Cond", "Oswald", "Arial Narrow", sans-serif;
+  --nh-cjk: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --nh-body: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --nh-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nh-snap: cubic-bezier(0.16, 1.16, 0.3, 1);
+  --nh-header: 84px;
+  background: var(--nh-bg);
+  color: var(--nh-ink);
+  font-family: var(--nh-body);
+}
+html[data-theme="light"] body.neo {
+  --nh-bg: #015fcc;
+  --nh-bg-2: #014aa6;
+  --nh-deep: #031f64;
+  --nh-ink: #ffffff;
+  --nh-text: #dbe9ff;
+  --nh-muted: #a9c8ee;
+  --nh-line: rgba(255, 255, 255, 0.42);
+  --nh-cyan: #16cffb;
+  --nh-pink: #fd77d9;
+  --nh-red: #ff2b2b;
+  --nh-white: #ffffff;
+  --nh-blue-text: #01489e;
+  --nh-text-shadow: 5px 5px 0 rgba(2, 20, 62, 0.55);
+}
+html[data-theme="dark"] body.neo {
+  --nh-bg: #031f64;
+  --nh-bg-2: #02123f;
+  --nh-deep: #010b26;
+  --nh-ink: #eaf6ff;
+  --nh-text: #bcd6f5;
+  --nh-muted: #7fa3cc;
+  --nh-line: rgba(120, 190, 255, 0.32);
+  --nh-cyan: #22e0ff;
+  --nh-pink: #ff4fb0;
+  --nh-red: #ff3b3b;
+  --nh-white: #f2f8ff;
+  --nh-blue-text: #012a6b;
+  --nh-text-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- 1. 全局壳层（非首页） ---------- */
+body.neo:not([data-page="home"]) {
+  --nh-header: 84px;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+body.neo[data-page="chat"] { --nh-header: 72px; }
+
+body.neo:not([data-page="home"]) .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  max-width: none;
+  height: var(--nh-header);
+  padding-inline: clamp(20px, 3.6vw, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--nh-line);
+  background: color-mix(in srgb, var(--nh-bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+body.neo:not([data-page="home"]) .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 7px 16px 7px 10px;
+  font-family: var(--nh-cjk);
+  font-size: 21px;
+  font-weight: 900;
+  color: var(--nh-blue-text);
+  background: var(--nh-white);
+  transform: rotate(-2.5deg);
+  box-shadow: 9px 9px 0 rgba(2, 20, 62, 0.42);
+}
+body.neo:not([data-page="home"]) .brand img {
+  width: 32px;
+  height: 32px;
+  padding: 5px;
+  background: var(--nh-blue-text);
+  filter: invert(1);
+}
+html[data-theme="dark"] body.neo:not([data-page="home"]) .brand img { filter: none; background: var(--nh-deep); }
+body.neo:not([data-page="home"]) .brand small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--nh-cond);
+  font-size: 9px;
+  letter-spacing: 0.42em;
+  color: color-mix(in srgb, var(--nh-blue-text) 65%, transparent);
+}
+body.neo:not([data-page="home"]) .site-header nav { display: flex; gap: 6px; align-self: stretch; align-items: center; }
+body.neo:not([data-page="home"]) .site-header nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 18px;
+  font-family: var(--nh-cjk);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nh-cyan);
+  text-shadow: 3px 3px 0 rgba(2, 20, 62, 0.65);
+  transform: rotate(-2deg);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+body.neo:not([data-page="home"]) .site-header nav a:hover,
+body.neo:not([data-page="home"]) .site-header nav a[aria-current] {
+  color: var(--nh-blue-text);
+  background: var(--nh-white);
+  box-shadow: 5px 5px 0 rgba(2, 20, 62, 0.4);
+  text-shadow: none;
+}
+body.neo:not([data-page="home"]) .header-github,
+body.neo:not([data-page="home"]) .theme-toggle {
+  padding: 9px 14px;
+  border: 0;
+  background: transparent;
+  font-family: var(--nh-cond);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nh-white);
+  text-shadow: 2px 2px 0 rgba(2, 20, 62, 0.6);
+  transform: rotate(-1.5deg);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+body.neo:not([data-page="home"]) .header-github:hover,
+body.neo:not([data-page="home"]) .theme-toggle:hover {
+  background: var(--nh-white);
+  color: var(--nh-blue-text);
+  text-shadow: none;
+  box-shadow: 5px 5px 0 rgba(2, 20, 62, 0.4);
+}
+body.neo:not([data-page="home"]) .site-footer {
+  max-width: none;
+  padding: 26px clamp(20px, 4vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 3px solid rgba(255, 255, 255, 0.2);
+  background: var(--nh-bg-2);
+  font-family: var(--nh-cjk);
+  font-size: 12px;
+  color: var(--nh-muted);
+}
+body.neo:not([data-page="home"]) .footer-brand { font-family: var(--nh-cjk); font-weight: 900; color: var(--nh-white); }
+body.neo:not([data-page="home"]) .footer-brand span { color: var(--nh-muted); }
+body.neo:not([data-page="home"]) .site-footer a:hover { color: var(--nh-cyan); }
+
+/* 通用按钮 */
+body.neo:not([data-page="home"]) .button {
+  border: 0;
+  font-family: var(--nh-cjk);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transform: rotate(-1.2deg);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+body.neo:not([data-page="home"]) .button.primary { background: var(--nh-red); color: #fff; box-shadow: 6px 6px 0 rgba(2, 20, 62, 0.45); }
+body.neo:not([data-page="home"]) .button.primary:hover:not(:disabled) { background: var(--nh-white); color: var(--nh-blue-text); }
+body.neo:not([data-page="home"]) .button.secondary { background: var(--nh-white); color: var(--nh-blue-text); box-shadow: 6px 6px 0 rgba(2, 20, 62, 0.4); border: 0; }
+body.neo:not([data-page="home"]) .button.secondary:hover:not(:disabled) { background: var(--nh-cyan); }
+body.neo:not([data-page="home"]) .text-link,
+body.neo:not([data-page="home"]) .text-button { color: var(--nh-cyan); font-weight: 700; }
+body.neo:not([data-page="home"]) .text-link:hover,
+body.neo:not([data-page="home"]) .text-button:hover:not(:disabled) { color: var(--nh-white); }
+
+/* ---------- 2. 示例练习 ---------- */
+body.neo[data-page="learn"] { background: var(--nh-bg); }
+body.neo[data-page="learn"] .wrap { max-width: 1460px; }
+body.neo[data-page="learn"] .workspace { padding-top: 30px; padding-bottom: 52px; gap: 26px; }
+body.neo[data-page="learn"] .course-sidebar .eyebrow { color: var(--nh-cyan); text-shadow: 2px 2px 0 rgba(2, 20, 62, 0.5); }
+body.neo[data-page="learn"] .course-sidebar h2 { color: var(--nh-white); text-shadow: var(--nh-text-shadow); }
+body.neo[data-page="learn"] .search-label { color: var(--nh-muted); }
+body.neo[data-page="learn"] .search {
+  background: var(--nh-white);
+  border: 0;
+  box-shadow: 6px 6px 0 rgba(2, 20, 62, 0.35);
+}
+body.neo[data-page="learn"] .search > span { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .search input { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .topic-group h3 { color: var(--nh-cyan); }
+body.neo[data-page="learn"] .topic-link { color: var(--nh-text); font-weight: 600; }
+body.neo[data-page="learn"] .topic-link:hover { background: rgba(255, 255, 255, 0.16); color: #fff; }
+body.neo[data-page="learn"] .topic-link.selected {
+  background: var(--nh-white);
+  color: var(--nh-blue-text);
+  box-shadow: 5px 5px 0 rgba(2, 20, 62, 0.35);
+}
+body.neo[data-page="learn"] .topic-link.selected .topic-dot,
+body.neo[data-page="learn"] .topic-dot.done { background: var(--nh-red); border-color: var(--nh-red); }
+body.neo[data-page="learn"] .sidebar-note { border-top-color: rgba(255, 255, 255, 0.25); }
+body.neo[data-page="learn"] .sidebar-note > span { color: var(--nh-cyan); }
+body.neo[data-page="learn"] .sidebar-note p { color: var(--nh-muted); }
+body.neo[data-page="learn"] .breadcrumbs { color: var(--nh-cyan); }
+body.neo[data-page="learn"] .breadcrumbs span { color: rgba(255, 255, 255, 0.4); }
+body.neo[data-page="learn"] .lesson-title h1 { color: var(--nh-white); text-shadow: var(--nh-text-shadow); }
+body.neo[data-page="learn"] .lesson-title p { color: var(--nh-muted); }
+body.neo[data-page="learn"] .green-tag {
+  background: var(--nh-cyan);
+  color: var(--nh-blue-text);
+  border: 0;
+  font-weight: 700;
+  transform: skewX(-10deg);
+}
+body.neo[data-page="learn"] .demo-notice {
+  background: rgba(2, 20, 62, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: var(--nh-text);
+}
+body.neo[data-page="learn"] .demo-notice a { color: var(--nh-cyan); }
+body.neo[data-page="learn"] .panel {
+  background: var(--nh-white);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 10px 10px 0 rgba(2, 20, 62, 0.4);
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="learn"] .panel-label { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .panel-label .step {
+  background: var(--nh-blue-text);
+  border: 0;
+  color: #fff;
+  border-radius: 0;
+  transform: skewX(-8deg);
+}
+body.neo[data-page="learn"] .question-panel h2,
+body.neo[data-page="learn"] .question-panel > p,
+body.neo[data-page="learn"] .panel p,
+body.neo[data-page="learn"] .panel label,
+body.neo[data-page="learn"] .quiz-panel legend,
+body.neo[data-page="learn"] .solution p { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .panel .muted { color: color-mix(in srgb, var(--nh-blue-text) 62%, transparent); }
+body.neo[data-page="learn"] textarea {
+  background: #f2f7ff;
+  border: 2px solid rgba(1, 72, 158, 0.22);
+  color: var(--nh-blue-text);
+  border-radius: 0;
+}
+body.neo[data-page="learn"] textarea::placeholder { color: rgba(1, 72, 158, 0.45); }
+body.neo[data-page="learn"] .hint {
+  background: rgba(22, 207, 251, 0.16);
+  border-left: 4px solid var(--nh-cyan);
+}
+body.neo[data-page="learn"] .hint > span { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .hint p { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .solution { border-top-color: rgba(1, 72, 158, 0.2); }
+body.neo[data-page="learn"] .solution strong { color: var(--nh-red); }
+body.neo[data-page="learn"] .option {
+  background: #fff;
+  border: 2px solid rgba(1, 72, 158, 0.22);
+  border-radius: 0;
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="learn"] .option:has(input:checked) { background: #e2f6ff; border-color: var(--nh-cyan); }
+body.neo[data-page="learn"] .option.correct { background: #e2f6ff; border-color: var(--nh-cyan); }
+body.neo[data-page="learn"] .option.incorrect { background: #ffe8e8; border-color: var(--nh-red); }
+body.neo[data-page="learn"] .option-letter { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .feedback { background: #e8f4ff; color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .feedback.positive { background: #e2f6ff; }
+body.neo[data-page="learn"] .feedback strong { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .feedback .feedback-recommendation {
+  color: rgba(1, 72, 158, 0.7);
+  border-top-color: rgba(1, 72, 158, 0.18);
+}
+body.neo[data-page="learn"] pre {
+  background: var(--nh-deep);
+  color: #d8f2ff;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 rgba(2, 20, 62, 0.3);
+}
+body.neo[data-page="learn"] .evidence-sidebar { padding-top: 56px; }
+body.neo[data-page="learn"] .evidence-card {
+  background: var(--nh-white);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 10px 10px 0 rgba(2, 20, 62, 0.4);
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="learn"] .evidence-card .panel-label,
+body.neo[data-page="learn"] .evidence-card h3 { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .evidence-card blockquote {
+  color: var(--nh-blue-text);
+  border-left: 4px solid var(--nh-cyan);
+}
+body.neo[data-page="learn"] .source-meta { border-top-color: rgba(1, 72, 158, 0.18); color: rgba(1, 72, 158, 0.62); }
+body.neo[data-page="learn"] .source-meta strong { color: var(--nh-blue-text); }
+body.neo[data-page="learn"] .evidence-note > span { color: var(--nh-cyan); }
+body.neo[data-page="learn"] .evidence-note p { color: var(--nh-muted); }
+body.neo[data-page="learn"] .session-status { border-top-color: rgba(255, 255, 255, 0.25); }
+body.neo[data-page="learn"] .session-status .eyebrow { color: var(--nh-cyan); }
+body.neo[data-page="learn"] .session-status p { color: var(--nh-muted); }
+body.neo[data-page="learn"] .session-status b { color: var(--nh-white); }
+
+/* ---------- 3. 学习记录 ---------- */
+body.neo[data-page="records"] { background: var(--nh-bg); }
+body.neo[data-page="records"] .page-heading h1 { color: var(--nh-white); text-shadow: var(--nh-text-shadow); }
+body.neo[data-page="records"] .page-heading p { color: var(--nh-text); }
+body.neo[data-page="records"] .records-actions .text-button { color: var(--nh-cyan); }
+body.neo[data-page="records"] .stats {
+  background: var(--nh-white);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 12px 12px 0 rgba(2, 20, 62, 0.4);
+}
+body.neo[data-page="records"] .stats > div { border-right-color: rgba(1, 72, 158, 0.2); }
+body.neo[data-page="records"] .stats span { color: rgba(1, 72, 158, 0.62); }
+body.neo[data-page="records"] .stats strong { color: var(--nh-blue-text); }
+body.neo[data-page="records"] .stats small { color: rgba(1, 72, 158, 0.55); }
+body.neo[data-page="records"] .empty-state {
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px dashed rgba(1, 72, 158, 0.35);
+  border-radius: 0;
+  box-shadow: 10px 10px 0 rgba(2, 20, 62, 0.32);
+}
+body.neo[data-page="records"] .empty-symbol { color: var(--nh-red); }
+body.neo[data-page="records"] .empty-state h2 { color: var(--nh-blue-text); }
+body.neo[data-page="records"] .empty-state p { color: rgba(1, 72, 158, 0.7); }
+body.neo[data-page="records"] .record {
+  background: var(--nh-white);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 8px 8px 0 rgba(2, 20, 62, 0.35);
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="records"] .record h2 { color: var(--nh-blue-text); }
+body.neo[data-page="records"] .record p { color: rgba(1, 72, 158, 0.78); }
+body.neo[data-page="records"] .record small { color: rgba(1, 72, 158, 0.55); }
+body.neo[data-page="records"] .record .tag {
+  background: var(--nh-cyan);
+  border: 0;
+  color: var(--nh-blue-text);
+  font-weight: 700;
+  transform: skewX(-10deg);
+}
+body.neo[data-page="records"] .record-icon { border-radius: 0; background: #e8f4ff; color: var(--nh-blue-text); }
+body.neo[data-page="records"] .record-icon.positive { background: var(--nh-cyan); color: var(--nh-blue-text); }
+body.neo[data-page="records"] .record summary { color: var(--nh-red); }
+body.neo[data-page="records"] .privacy-note { color: var(--nh-muted); }
+body.neo[data-page="records"] dialog {
+  background: var(--nh-white);
+  color: var(--nh-blue-text);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 14px 14px 0 rgba(2, 20, 62, 0.5);
+}
+body.neo[data-page="records"] dialog p { color: var(--nh-blue-text); }
+
+/* ---------- 4. 关于 ---------- */
+body.neo[data-page="about"] { background: var(--nh-bg); }
+body.neo[data-page="about"] .about-page > h1 { color: var(--nh-white); text-shadow: var(--nh-text-shadow); }
+body.neo[data-page="about"] .about-lead { color: var(--nh-text); }
+body.neo[data-page="about"] .eyebrow { color: var(--nh-cyan); text-shadow: 2px 2px 0 rgba(2, 20, 62, 0.5); }
+body.neo[data-page="about"] .panel {
+  background: var(--nh-white);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 10px 10px 0 rgba(2, 20, 62, 0.4);
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="about"] .panel h2 { color: var(--nh-blue-text); }
+body.neo[data-page="about"] .about-grid ul { color: rgba(1, 72, 158, 0.82); }
+body.neo[data-page="about"] .about-materials h2 { color: var(--nh-white); text-shadow: var(--nh-text-shadow); }
+body.neo[data-page="about"] .about-materials > p { color: var(--nh-text); }
+body.neo[data-page="about"] .material-row { border-bottom-color: rgba(255, 255, 255, 0.22); }
+body.neo[data-page="about"] .material-row > span:first-child { color: var(--nh-cyan); }
+body.neo[data-page="about"] .material-row h3 { color: var(--nh-white); }
+body.neo[data-page="about"] .material-row p { color: var(--nh-muted); }
+body.neo[data-page="about"] .material-row .tag {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--nh-muted);
+}
+body.neo[data-page="about"] .open-banner {
+  background: var(--nh-deep);
+  border-radius: 0;
+  transform: rotate(-1deg);
+  box-shadow: 14px 14px 0 rgba(2, 20, 62, 0.35);
+}
+body.neo[data-page="about"] .open-banner h2 { color: var(--nh-white); }
+body.neo[data-page="about"] .open-banner p { color: var(--nh-muted); }
+
+/* ---------- 5. AI 学习助手 ---------- */
+body.neo[data-page="chat"] { background: var(--nh-bg); }
+body.neo[data-page="chat"] .chat-layout { height: calc(100dvh - 72px); }
+body.neo[data-page="chat"] .chat-sidebar {
+  background: rgba(2, 20, 62, 0.55);
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--nh-white);
+}
+body.neo[data-page="chat"] .chat-sidebar-title { color: var(--nh-white); }
+body.neo[data-page="chat"] .chat-sidebar-title small { color: var(--nh-muted); }
+body.neo[data-page="chat"] .chat-new {
+  background: var(--nh-white);
+  border: 0;
+  border-radius: 0;
+  color: var(--nh-blue-text);
+  font-weight: 800;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+  transform: rotate(-1.2deg);
+}
+body.neo[data-page="chat"] .chat-new:hover { background: var(--nh-cyan); }
+body.neo[data-page="chat"] .chat-session { color: var(--nh-text); border-radius: 0; }
+body.neo[data-page="chat"] .chat-session:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+body.neo[data-page="chat"] .chat-session.active {
+  background: var(--nh-white);
+  color: var(--nh-blue-text);
+  font-weight: 800;
+}
+body.neo[data-page="chat"] .chat-sidebar-bottom { border-top-color: rgba(255, 255, 255, 0.22); }
+body.neo[data-page="chat"] .chat-sidebar-bottom button { color: var(--nh-muted); }
+body.neo[data-page="chat"] .chat-sidebar-bottom button:hover { color: var(--nh-cyan); }
+body.neo[data-page="chat"] .chat-main { background: var(--nh-white); color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-toolbar {
+  background: var(--nh-white);
+  border-bottom: 2px solid rgba(1, 72, 158, 0.2);
+}
+body.neo[data-page="chat"] .chat-toolbar h1 { color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-toolbar p { color: rgba(1, 72, 158, 0.6); }
+body.neo[data-page="chat"] .chat-toolbar .button.secondary {
+  background: #eef5ff;
+  border: 2px solid rgba(1, 72, 158, 0.25);
+  color: var(--nh-blue-text);
+  box-shadow: none;
+}
+body.neo[data-page="chat"] .chat-toolbar .button.secondary:hover { background: var(--nh-cyan); }
+body.neo[data-page="chat"] .chat-thread { background: var(--nh-white); }
+body.neo[data-page="chat"] .chat-welcome .eyebrow { color: var(--nh-red); }
+body.neo[data-page="chat"] .welcome-mark { color: var(--nh-red); }
+body.neo[data-page="chat"] .chat-welcome h2 { color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-welcome > p { color: rgba(1, 72, 158, 0.7); }
+body.neo[data-page="chat"] .starter-grid button {
+  background: #eef5ff;
+  border: 2px solid rgba(1, 72, 158, 0.2);
+  border-radius: 0;
+  color: var(--nh-blue-text);
+  box-shadow: 5px 5px 0 rgba(1, 72, 158, 0.12);
+}
+body.neo[data-page="chat"] .starter-grid button:hover {
+  background: var(--nh-cyan);
+  border-color: var(--nh-cyan);
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="chat"] .starter-grid button > span { color: var(--nh-red); }
+body.neo[data-page="chat"] .starter-grid small { color: rgba(1, 72, 158, 0.62); }
+body.neo[data-page="chat"] .chat-quick-actions button {
+  background: #fff;
+  border: 2px solid rgba(1, 72, 158, 0.25);
+  border-radius: 0;
+  color: var(--nh-blue-text);
+  font-weight: 700;
+}
+body.neo[data-page="chat"] .chat-quick-actions button:hover { background: var(--nh-cyan); }
+body.neo[data-page="chat"] .chat-composer-wrap { background: var(--nh-white); box-shadow: 0 -8px 0 rgba(1, 72, 158, 0.06); }
+body.neo[data-page="chat"] .chat-composer {
+  background: #f7fbff;
+  border: 2px solid rgba(1, 72, 158, 0.22);
+  border-radius: 0;
+  box-shadow: none;
+}
+body.neo[data-page="chat"] .chat-composer:focus-within { border-color: var(--nh-cyan); box-shadow: 0 0 0 3px rgba(22, 207, 251, 0.25); }
+body.neo[data-page="chat"] .chat-composer textarea { color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-composer textarea::placeholder { color: rgba(1, 72, 158, 0.45); }
+body.neo[data-page="chat"] .composer-controls select {
+  background: #eef5ff;
+  border: 2px solid rgba(1, 72, 158, 0.22);
+  border-radius: 0;
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="chat"] .composer-hint { color: rgba(1, 72, 158, 0.45); }
+body.neo[data-page="chat"] .chat-send { background: var(--nh-red); border-radius: 0; color: #fff; }
+body.neo[data-page="chat"] .chat-send:hover { background: var(--nh-deep); }
+body.neo[data-page="chat"] #chat-status { color: rgba(1, 72, 158, 0.6); }
+body.neo[data-page="chat"] .chat-message .message-author strong { color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-message .message-author small { color: rgba(1, 72, 158, 0.5); }
+body.neo[data-page="chat"] .user-content { color: #12325c; }
+body.neo[data-page="chat"] .user-avatar { background: var(--nh-red); color: #fff; border-radius: 0; }
+body.neo[data-page="chat"] .assistant-message { border-top-color: rgba(1, 72, 158, 0.16); }
+body.neo[data-page="chat"] .prose,
+body.neo[data-page="chat"] .prose p,
+body.neo[data-page="chat"] .prose li,
+body.neo[data-page="chat"] .prose h1,
+body.neo[data-page="chat"] .prose h2,
+body.neo[data-page="chat"] .prose h3,
+body.neo[data-page="chat"] .prose h4 { color: #12325c; }
+body.neo[data-page="chat"] .prose .katex-display {
+  background: #eef5ff;
+  border-left: 4px solid var(--nh-cyan);
+  border-radius: 0;
+}
+body.neo[data-page="chat"] .prose :not(pre) > code { background: #e4f0ff; color: #0b3f7d; border-radius: 0; }
+body.neo[data-page="chat"] .message-actions button { color: rgba(1, 72, 158, 0.65); }
+body.neo[data-page="chat"] .message-actions button:hover { color: var(--nh-red); }
+body.neo[data-page="chat"] .chat-context {
+  background: #eef5ff;
+  border-left: 2px solid rgba(1, 72, 158, 0.18);
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="chat"] .context-title,
+body.neo[data-page="chat"] .context-section > summary,
+body.neo[data-page="chat"] .chat-context > label { color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-context > select,
+body.neo[data-page="chat"] .context-section textarea {
+  background: #fff;
+  border: 2px solid rgba(1, 72, 158, 0.2);
+  border-radius: 0;
+  color: var(--nh-blue-text);
+}
+body.neo[data-page="chat"] .context-help,
+body.neo[data-page="chat"] .context-footer,
+body.neo[data-page="chat"] .context-section > small { color: rgba(1, 72, 158, 0.6); }
+body.neo[data-page="chat"] .evidence-item { background: #fff; border: 2px solid rgba(1, 72, 158, 0.18); border-radius: 0; }
+body.neo[data-page="chat"] .evidence-item summary { color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .evidence-item p { color: #12325c; }
+body.neo[data-page="chat"] .hosted-banner { background: rgba(255, 255, 255, 0.14); border-bottom-color: rgba(255, 255, 255, 0.2); color: var(--nh-text); }
+body.neo[data-page="chat"] dialog { background: var(--nh-white); color: var(--nh-blue-text); border-radius: 0; }
+body.neo[data-page="chat"] .connection-dialog p,
+body.neo[data-page="chat"] .connection-dialog label:not(.thinking-toggle) { color: var(--nh-blue-text); }
+
+/* ---------- 6. 移动端 ---------- */
+@media (max-width: 900px) {
+  body.neo:not([data-page="home"]) .site-header nav { display: none; }
+  body.neo:not([data-page="home"]) .brand { font-size: 18px; }
+  body.neo:not([data-page="home"]) .header-github { display: none; }
+  body.neo[data-page="learn"] .workspace { grid-template-columns: 1fr; }
+  body.neo[data-page="learn"] .evidence-sidebar { padding-top: 0; }
+  body.neo[data-page="chat"] .chat-sidebar { background: rgba(2, 20, 62, 0.85); }
+}
+
+/* ---------- 7. 无障碍 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body.neo *,
+  body.neo *::before,
+  body.neo *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+body.neo :focus-visible { outline: 3px solid var(--nh-cyan); outline-offset: 3px; }
+
+/* 次级按钮：给出浅蓝底 + 硬投影，避免在白色面板上糊成一片 */
+body.neo:not([data-page="home"]) .button.secondary {
+  background: #eef5ff;
+  border: 2px solid rgba(1, 72, 158, 0.22);
+  color: var(--nh-blue-text);
+  box-shadow: 6px 6px 0 rgba(2, 20, 62, 0.28);
+}
+body.neo:not([data-page="home"]) .button.secondary:hover:not(:disabled) { background: var(--nh-cyan); border-color: var(--nh-cyan); }
+body.neo:not([data-page="home"]) .button.light { background: var(--nh-cyan); color: var(--nh-blue-text); box-shadow: 6px 6px 0 rgba(2, 20, 62, 0.35); }
+body.neo:not([data-page="home"]) .button.light:hover { background: var(--nh-white); }
+
+/* 聊天欢迎态：压紧一点，别让第二排引导卡被输入框裁掉 */
+body.neo[data-page="chat"] .chat-welcome { max-width: 600px; margin: 4px auto 14px; }
+body.neo[data-page="chat"] .chat-welcome h2 { font-size: 29px; margin: 10px 0 12px; }
+body.neo[data-page="chat"] .chat-welcome > p { font-size: 12px; }
+body.neo[data-page="chat"] .starter-grid { margin-top: 18px; gap: 10px; }
+body.neo[data-page="chat"] .starter-grid button { padding: 12px; }
+body.neo[data-page="chat"] .chat-quick-actions { margin-bottom: 8px; }
+
+/* 深色主题下：旧规则会给 textarea 铺深底，聊天输入框要跟白色 composer 保持一致 */
+body.neo[data-page="chat"] .chat-composer textarea { background: transparent; color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-context textarea,
+body.neo[data-page="chat"] .context-section textarea { background: #ffffff; color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .chat-composer-wrap { background: var(--nh-white); }
+
+/* ==========================================================================
+   交互态补完：过渡帧、hover / active / focus / disabled、白底链接对比度
+   ========================================================================== */
+body.neo button,
+body.neo .button,
+body.neo a,
+body.neo select,
+body.neo summary,
+body.neo .option,
+body.neo .chat-session {
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease,
+    box-shadow 0.18s ease, transform 0.16s ease, opacity 0.18s ease;
+}
+
+/* 按下反馈（只在按住时位移，不影响命中区抖动） */
+body.neo button:not(:disabled):active,
+body.neo .button:not(:disabled):active {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 0 rgba(2, 20, 62, 0.4) !important;
+}
+
+/* 禁用态：一眼能看出来 */
+body.neo button:disabled,
+body.neo .button:disabled,
+body.neo .text-button:disabled {
+  opacity: 0.42;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed;
+}
+
+/* 白底板块里的文字链接：青色在浅底上不达标，改深蓝 / 悬停红 */
+body.neo .panel .text-link,
+body.neo .panel .text-button,
+body.neo .evidence-card .text-link,
+body.neo .record .text-link,
+body.neo .about-page .text-link,
+body.neo .chat-context .text-link,
+body.neo .record summary {
+  color: var(--nh-blue-text);
+}
+body.neo .panel .text-link:hover,
+body.neo .panel .text-button:hover:not(:disabled),
+body.neo .evidence-card .text-link:hover,
+body.neo .record .text-link:hover,
+body.neo .about-page .text-link:hover,
+body.neo .chat-context .text-link:hover,
+body.neo .record summary:hover {
+  color: var(--nh-red);
+}
+body.neo .demo-notice a {
+  color: var(--nh-cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.18s ease;
+}
+body.neo .demo-notice a:hover { color: var(--nh-white); }
+
+/* 页脚、品牌、跳过导航 */
+body.neo .site-footer a { transition: color 0.18s ease; }
+body.neo .site-footer a:hover { color: var(--nh-cyan); }
+body.neo a.brand { transition: box-shadow 0.18s ease, background 0.18s ease; }
+body.neo a.brand:hover { box-shadow: 11px 11px 0 rgba(2, 20, 62, 0.42); }
+body.neo .skip-link {
+  transition: transform 0.18s ease, background 0.18s ease;
+  background: var(--nh-white);
+  color: var(--nh-blue-text);
+  font-weight: 800;
+}
+body.neo .skip-link:hover { background: var(--nh-cyan); }
+
+/* 学习页：知识点、选项、输入框 */
+body.neo .topic-link { transition: background 0.18s ease, color 0.18s ease; }
+body.neo .option { cursor: pointer; }
+body.neo .option:hover { border-color: var(--nh-cyan); background: #f1faff; }
+body.neo .option:has(input:checked) { box-shadow: inset 4px 0 0 var(--nh-cyan); }
+body.neo .option:has(input:focus-visible) { outline: 3px solid var(--nh-cyan); outline-offset: 2px; }
+body.neo .question-panel textarea:hover,
+body.neo .question-panel textarea:focus { border-color: var(--nh-cyan); }
+body.neo .hint-actions .text-button:hover:not(:disabled) { color: var(--nh-red); }
+
+/* 表单控件统一焦点 */
+body.neo :where(input[type="text"], input[type="search"], input[type="url"], input[type="password"], textarea, select):focus {
+  outline: none;
+  border-color: var(--nh-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(22, 207, 251, 0.22);
+}
+body.neo select { cursor: pointer; }
+body.neo select:hover { border-color: var(--nh-cyan); }
+body.neo summary { cursor: pointer; }
+body.neo summary:hover { color: var(--nh-red); }
+
+/* 聊天页 */
+body.neo[data-page="chat"] .chat-sidebar-bottom button:hover:not(:disabled) {
+  color: var(--nh-white);
+  background: rgba(255, 255, 255, 0.12);
+}
+body.neo[data-page="chat"] .chat-new:hover { box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.32); }
+body.neo[data-page="chat"] .chat-session:hover { background: rgba(255, 255, 255, 0.14); }
+body.neo[data-page="chat"] .starter-grid button:hover { box-shadow: 7px 7px 0 rgba(1, 72, 158, 0.24); }
+body.neo[data-page="chat"] .chat-quick-actions button:hover {
+  border-color: var(--nh-cyan);
+  box-shadow: 4px 4px 0 rgba(1, 72, 158, 0.18);
+}
+body.neo[data-page="chat"] .message-actions button:hover:not(:disabled) { color: var(--nh-red); }
+body.neo[data-page="chat"] .chat-send:hover { background: var(--nh-deep); }
+body.neo[data-page="chat"] .chat-send:active { transform: translateY(1px); }
+body.neo[data-page="chat"] .upload-text:hover { border-color: var(--nh-cyan); color: var(--nh-blue-text); }
+body.neo[data-page="chat"] .context-section > summary:hover { color: var(--nh-red); }
+body.neo[data-page="chat"] .mobile-session-actions button:hover { color: var(--nh-red); }
+body.neo[data-page="chat"] .chat-toolbar .button.secondary:hover { box-shadow: 4px 4px 0 rgba(1, 72, 158, 0.2); }
+body.neo[data-page="chat"] .chat-composer-wrap #chat-status { color: rgba(1, 72, 158, 0.55); }
+
+/* 记录页：记录卡整卡可点感 */
+body.neo[data-page="records"] .record { transition: box-shadow 0.18s ease, transform 0.18s ease; }
+body.neo[data-page="records"] .record:hover { box-shadow: 12px 12px 0 rgba(2, 20, 62, 0.42); }
+body.neo[data-page="records"] .record summary { transition: color 0.18s ease; }
+body.neo[data-page="records"] dialog button { min-width: 96px; }
+
+/* 关于页 */
+body.neo[data-page="about"] .material-row { transition: background 0.18s ease, padding-left 0.18s ease; }
+body.neo[data-page="about"] .material-row:hover { background: rgba(255, 255, 255, 0.06); padding-left: 10px; }
+
+/* 深色模式下的白板链接保持深蓝 */
+html[data-theme="dark"] body.neo .panel .text-link,
+html[data-theme="dark"] body.neo .evidence-card .text-link,
+html[data-theme="dark"] body.neo .record .text-link,
+html[data-theme="dark"] body.neo .about-page .text-link,
+html[data-theme="dark"] body.neo .chat-context .text-link { color: var(--nh-blue-text); }
+
+
+/* 单选圈与主题色统一 */
+body.neo input[type="radio"] { accent-color: var(--nh-cyan); }
+body.neo .option input[type="radio"]:hover { accent-color: var(--nh-red); }
+/* 文本按钮禁用态保持一致 */
+body.neo .text-button:disabled { color: var(--nh-muted) !important; text-decoration: none; }
