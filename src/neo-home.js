@@ -231,12 +231,17 @@ export function initNeoShell() {
   const spot = document.createElement('div');
   spot.className = 'nh-spot';
   spot.setAttribute('aria-hidden', 'true');
-  const wipe = document.createElement('div');
-  wipe.className = 'nh-wipe';
-  wipe.setAttribute('aria-hidden', 'true');
-  wipe.innerHTML = '<span></span><span></span><span></span>';
+  let wipe = document.querySelector('.nh-wipe');
+  const staticWipe = !!wipe;
+  if (!wipe) {
+    wipe = document.createElement('div');
+    wipe.className = 'nh-wipe';
+    wipe.setAttribute('aria-hidden', 'true');
+    wipe.innerHTML = '<span></span><span></span><span></span>';
+  }
   document.body.classList.add('neo');
-  document.body.append(spot, layer, grain, vignette, wipe);
+  if (!staticWipe) document.body.append(spot, layer, grain, vignette, wipe);
+  else document.body.append(spot, layer, grain, vignette);
 
   /* 鼠标跟随光斑 */
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduced()) {
@@ -318,14 +323,22 @@ export function initNeoShell() {
     }, 460);
   });
 
-  // 首次进入：播放一次揭幕
-  if (!isReduced) {
-    wipe.classList.add('is-revealing');
-    document.body.classList.add('nh-enter');
-    wipeTimer = window.setTimeout(() => {
-      wipe.classList.remove('is-revealing');
-      document.body.classList.remove('nh-enter');
-    }, 520);
+  // 首次进入：从静态幕布揭开（等两帧让内容画好）
+  if (staticWipe) {
+    if (isReduced) {
+      wipe.classList.remove('is-held');
+    } else {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        wipe.classList.remove('is-held');
+        void wipe.offsetWidth;
+        wipe.classList.add('is-revealing');
+        document.body.classList.add('nh-enter');
+        wipeTimer = window.setTimeout(() => {
+          wipe.classList.remove('is-revealing');
+          document.body.classList.remove('nh-enter');
+        }, 480);
+      }));
+    }
   }
 
 }

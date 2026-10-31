@@ -1437,3 +1437,8 @@ body.nh-enter main { animation: nhPageIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) bo
 /* 路由切换时，页面内容直接就位（不淡入），避免在色带退场的瞬间出现"半透明页面" */
 body.nh-instant [data-stagger] { opacity: 1 !important; animation: none !important; }
 
+
+/* 首屏加载幕布：静态盖满，不播入场动画 */
+.nh-wipe.is-held { visibility: visible; }
+.nh-wipe.is-held::before { opacity: 1; }
+.nh-wipe.is-held span { animation: none !important; transform: translateY(0) rotate(6deg); }

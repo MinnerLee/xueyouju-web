@@ -17,6 +17,7 @@ body.neo {
   font-family: var(--nh-body);
 }
 html[data-theme="light"] body.neo {
+  background: #015fcc;
   --nh-bg: #015fcc;
   --nh-bg-2: #014aa6;
   --nh-deep: #031f64;
@@ -32,6 +33,7 @@ html[data-theme="light"] body.neo {
   --nh-text-shadow: 5px 5px 0 rgba(2, 20, 62, 0.55);
 }
 html[data-theme="dark"] body.neo {
+  background: #031f64;
   --nh-bg: #031f64;
   --nh-bg-2: #02123f;
   --nh-deep: #010b26;
@@ -714,3 +716,19 @@ body.neo input[type="radio"] { accent-color: var(--nh-cyan); }
 body.neo .option input[type="radio"]:hover { accent-color: var(--nh-red); }
 /* 文本按钮禁用态保持一致 */
 body.neo .text-button:disabled { color: var(--nh-muted) !important; text-decoration: none; }
+
+/* ==========================================================================
+   首屏防闪：样式不再依赖 JS 才生效
+   ========================================================================== */
+/* html 自己的底色也用主题色，避免 body 绘制前露出默认纸色 */
+html.neo[data-theme="light"] { background: #015fcc; color-scheme: light; }
+html.neo[data-theme="dark"] { background: #031f64; color-scheme: dark; }
+
+/* 内容还没渲染时先撑住画面高度，避免页脚先贴顶、随后被内容顶下去 */
+body.neo main:empty { min-height: calc(100vh - var(--nh-header) - 92px); }
+
+/* 首帧就有正确底色，不依赖 app.js */
+body.neo { background: var(--nh-bg); }
+
+/* 旧皮肤里 html 的背景来自 --paper，这里一并压掉 */
+html.neo body { background: var(--nh-bg); }
