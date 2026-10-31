@@ -69,9 +69,7 @@ body.neo:not([data-page="home"]) .site-header {
   justify-content: space-between;
   gap: 24px;
   border-bottom: 1px solid var(--nh-line);
-  background: color-mix(in srgb, var(--nh-bg) 90%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--nh-bg) 94%, transparent);
 }
 body.neo:not([data-page="home"]) .brand {
   display: inline-flex;
@@ -752,10 +750,6 @@ body.neo .site-footer { position: relative; z-index: 1; }
 body.neo[data-page="home"] .nh-process,
 body.neo[data-page="home"] .nh-proof { background: color-mix(in srgb, var(--nh-deep) 86%, transparent); }
 body.neo[data-page="home"] .nh-open-inner { background: color-mix(in srgb, var(--nh-deep) 92%, transparent); }
-body.neo[data-page="learn"] .panel,
-body.neo[data-page="records"] .stats,
-body.neo[data-page="records"] .record,
-body.neo[data-page="about"] .panel { backdrop-filter: blur(2px); }
 
 /* 命令条属于「菜单页」的 HUD，其它页面隐藏，避免压住内容 */
 body.neo:not([data-page="home"]) .nh-hud { display: none; }

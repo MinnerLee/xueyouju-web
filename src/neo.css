@@ -1809,3 +1809,10 @@ body[data-page="home"] .nh-menu-list:focus-visible { outline: 3px solid var(--nh
 
 /* 速度楔形在未选中时会平移出卡片，用 overflow 裁掉，避免撑出横向滚动 */
 body[data-page="home"] .nh-menu-item { overflow: hidden; }
+
+/* 性能：全屏叠层不再用 mix-blend-mode，避免和动画背景一起逐帧重新混合 */
+body[data-page="home"] .nh-fx-scan { mix-blend-mode: normal; background: repeating-linear-gradient(180deg, rgba(0, 8, 30, 0.16) 0 1px, transparent 1px 3px); opacity: 0.5; }
+html[data-theme="dark"] body[data-page="home"] .nh-fx-scan { background: repeating-linear-gradient(180deg, rgba(190, 240, 255, 0.07) 0 1px, transparent 1px 3px); }
+body[data-page="home"] .nh-fx-grain { mix-blend-mode: normal; opacity: 0.06; }
+body[data-page="home"] .nh-fx-vignette { mix-blend-mode: normal; }
+.nh-spot { mix-blend-mode: normal; background: radial-gradient(circle, rgba(180, 240, 255, 0.14) 0%, transparent 62%); }

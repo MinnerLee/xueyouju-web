@@ -272,6 +272,7 @@ export function initNeoShell() {
   hud.innerHTML = `
     <div class="nh-hud-top"><strong class="nh-hud-title">View / Explore</strong><span class="nh-hud-sub">Command</span></div>
     <div class="nh-hud-actions">
+      <button type="button" class="nh-hud-btn" data-bg-toggle aria-pressed="true"><b aria-hidden="true">◍</b><span class="nh-hud-bg-label">BG ON</span></button>
       <button type="button" class="nh-hud-btn" data-sfx-toggle aria-pressed="true"><b aria-hidden="true">♪</b><span class="nh-hud-sfx-label">SFX ON</span></button>
       <span class="nh-hud-hint">Ⓐ 打开　Ⓑ 返回</span>
     </div>`;
@@ -339,6 +340,17 @@ export function initNeoShell() {
   };
   syncSfx();
   sfxBtn?.addEventListener('click', () => { sfx.toggle(); syncSfx(); });
+
+  // 背景动画开关（低配机器可关掉）
+  const bgBtn = hud.querySelector('[data-bg-toggle]');
+  const bgLabel = hud.querySelector('.nh-hud-bg-label');
+  const syncBg = () => {
+    const on = window.__nhBg ? window.__nhBg.enabled : true;
+    if (bgBtn) { bgBtn.setAttribute('aria-pressed', String(on)); bgBtn.classList.toggle('is-off', !on); }
+    if (bgLabel) bgLabel.textContent = on ? 'BG ON' : 'BG OFF';
+  };
+  syncBg();
+  bgBtn?.addEventListener('click', () => { window.__nhBg?.toggle(); syncBg(); });
 
   // 全局 hover / click 音效（只对可交互元素）
   let lastHover = null;
