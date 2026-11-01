@@ -1,18 +1,42 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#162b2a">
+  <meta name="theme-color" content="#015fcc">
   <meta name="description" content="学有据：从课程依据出发，通过分层提示、独立尝试和小测，走向真正理解。面向工科数学分析与 C 语言的开源学习演示。">
   <title>学有据 · 每一步理解，都有依据</title>
+  <style>
+    /* 第一帧就用主题色铺底，避免浏览器默认白底闪一下 */
+    html { background: #015fcc; color-scheme: light; }
+    html[data-theme="dark"] { background: #031f64; color-scheme: dark; }
+  </style>
+  <script>
+    // 在样式生效前定好主题，避免首帧先用默认浅色再跳变
+    (function () {
+      try {
+        var saved = localStorage.getItem('xueyouju:theme');
+        if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+      } catch (error) { /* 存储不可用时保持默认浅色 */ }
+      document.documentElement.classList.add('neo');
+      // 保险：脚本没跑起来时也别让幕布一直盖着
+      setTimeout(function () {
+        var w = document.getElementById('nh-wipe');
+        if (w && w.classList.contains('is-held')) w.classList.remove('is-held');
+      }, 2600);
+    })();
+  </script>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./src/styles.css">
   <link rel="stylesheet" href="./src/chat.css">
   <link rel="stylesheet" href="./assets/vendor/katex.min.css">
+  <link rel="stylesheet" href="./src/neo.css">
+  <link rel="stylesheet" href="./src/neo-pages.css">
+  <link rel="preload" href="./assets/fonts/archivo-black-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/oswald-latin.woff2" as="font" type="font/woff2" crossorigin>
   <script type="module" src="./src/app.js"></script>
 </head>
-<body>
+<body class="neo">
   <a class="skip-link" href="#main">跳到主要内容</a>
   <header class="site-header">
     <a class="brand" href="#home" aria-label="学有据首页"><img src="./assets/mark.svg" width="36" height="36" alt=""><span>学有据<small>XUEYOUJU</small></span></a>
@@ -22,6 +46,8 @@
   <main id="main" tabindex="-1"></main>
   <footer class="site-footer"><a class="footer-brand" href="#home">学有据 <span>让每一步理解，都有依据。</span></a><div><span>自编内容 · 规则演示 v0.1</span><a href="./LICENSE" target="_blank" rel="noopener">MIT 开源</a><a href="#about">关于项目</a></div></footer>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <!-- 首屏加载幕布：HTML 一渲染就盖住画面，等脚本把内容画好后再揭开 -->
+  <div class="nh-wipe is-held" id="nh-wipe" aria-hidden="true"><span></span><span></span><span></span></div>
   <noscript><div class="noscript">请启用 JavaScript 以使用课程选择、分层提示和小测。项目说明可在 GitHub README 中阅读。</div></noscript>
 </body>
 </html>
