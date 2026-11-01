@@ -3,6 +3,27 @@
    （首页专用规则仍在 neo.css 里，本文件只处理全局壳层 + learn / records / about / chat）
    ========================================================================== */
 
+/* ---------- 主站内的 AI 密钥入口 ---------- */
+.ai-access { min-height: calc(100dvh - 84px); display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: clamp(32px, 7vw, 110px); max-width: 1200px; margin: auto; padding: 70px 40px; }
+.ai-access-intro .eyebrow { color: var(--nh-cyan); font-family: var(--nh-cond); letter-spacing: .2em; }
+.ai-access-intro h1 { font-size: clamp(36px, 4.7vw, 66px); line-height: 1.25; letter-spacing: -.04em; margin: 24px 0; color: var(--nh-ink); text-shadow: var(--nh-text-shadow); }
+.ai-access-intro p { color: var(--nh-text); line-height: 1.9; }
+.ai-access-tags { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.ai-access-tags span { border: 1px solid var(--nh-line); color: var(--nh-text); padding: 7px 13px; font-size: 12px; }
+.ai-access-card { padding: clamp(24px, 3vw, 42px); background: var(--nh-deep); border: 1px solid var(--nh-line); border-top: 5px solid var(--nh-cyan); box-shadow: 12px 12px 0 rgba(0,0,0,.15); min-width: 0; }
+.ai-access-index { color: var(--nh-cyan); font-family: var(--nh-cond); letter-spacing: .14em; font-size: 13px; }
+.ai-access-card h2 { margin: 18px 0 28px; color: var(--nh-ink); font-size: 25px; }
+.ai-access-card label { display: block; color: var(--nh-text); margin-bottom: 10px; font-size: 13px; }
+.ai-access-card input { width: 100%; min-height: 52px; border: 1px solid var(--nh-line); background: var(--nh-bg-2); color: var(--nh-ink); padding: 13px 16px; border-radius: 0; font: inherit; }
+.ai-access-card input::placeholder { color: var(--nh-muted); }
+.ai-access-card input:focus-visible { outline: 2px solid var(--nh-cyan); outline-offset: 3px; }
+#ai-access-help { color: var(--nh-text); font-size: 12px; line-height: 1.7; margin-top: 14px; }
+#ai-access-error { min-height: 24px; color: #ffb2bc; font-size: 13px; line-height: 1.7; margin: 16px 0; }
+body.neo .ai-access-card .button { display: flex; justify-content: space-between; width: 100%; min-height: 50px; background: var(--nh-cyan); color: #012a6b; border: 0; border-radius: 0; font-weight: 700; }
+.ai-access-card .button:disabled { opacity: .6; cursor: wait; }
+.ai-access-back { display: inline-block; color: var(--nh-text); font-size: 13px; margin-top: 24px; }
+@media(max-width:760px) { .ai-access { min-height: auto; grid-template-columns: minmax(0,1fr); gap: 28px; padding: 38px 22px 54px; } .ai-access-intro h1 { font-size: 38px; margin: 16px 0; } .ai-access-intro p { font-size: 14px; } .ai-access-tags { margin-top: 20px; gap: 8px; } .ai-access-card { box-shadow: 7px 7px 0 rgba(0,0,0,.15); } }
+
 /* ---------- 0. 全局令牌（与首页同源，供非首页复用） ---------- */
 body.neo {
   --nh-display: "Neo Display", "Oswald", "Arial Black", sans-serif;

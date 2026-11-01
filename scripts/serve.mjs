@@ -27,7 +27,7 @@ const server = createServer(async (req, res) => {
     res.on('close', () => abort.abort());
     try {
       const request = new Request(`http://localhost:${port}${req.url}`, { method: req.method, headers: req.headers, ...(req.method !== 'GET' && req.method !== 'HEAD' ? { body: Readable.toWeb(req), duplex: 'half' } : {}), signal: abort.signal });
-      const response = await apiResponse(request, { ...process.env, LOCAL_ONLY: String(localOnly), SITE_PRIVATE_MODE: 'false' });
+      const response = await apiResponse(request, { ...process.env, LOCAL_ONLY: String(localOnly), CLIENT_IP: req.socket.remoteAddress });
       res.writeHead(response.status, Object.fromEntries(response.headers));
       if (response.body) Readable.fromWeb(response.body).on('error', () => res.destroy()).pipe(res); else res.end();
     } catch { if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: '服务暂时不可用。' })); }
