@@ -1158,22 +1158,7 @@ html[data-theme="dark"] .nh-fx-vignette { background: radial-gradient(ellipse at
 body[data-page="home"] .nh-spot { display: block; }
 @media (hover: none), (pointer: coarse) { body[data-page="home"] .nh-spot { display: none; } }
 
-.nh-wipe { position: fixed; inset: 0; z-index: 80; pointer-events: none; overflow: hidden; visibility: hidden; }
-.nh-wipe span { position: absolute; top: -20%; height: 140%; width: 52%; transform: translateY(-118%) rotate(7deg); will-change: transform; }
-.nh-wipe span:nth-child(1) { left: -18%; background: #ffffff; }
-.nh-wipe span:nth-child(2) { left: 22%; background: #ff2b2b; }
-.nh-wipe span:nth-child(3) { left: 62%; background: #031f64; }
-.nh-wipe.is-covering { visibility: visible; }
-.nh-wipe.is-covering span { animation: nhCover 0.46s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
-.nh-wipe.is-covering span:nth-child(2) { animation-delay: 0.055s; }
-.nh-wipe.is-covering span:nth-child(3) { animation-delay: 0.11s; }
-.nh-wipe.is-revealing { visibility: visible; }
-.nh-wipe.is-revealing span { animation: nhReveal 0.52s cubic-bezier(0.76, 0, 0.24, 1) 0.06s forwards; }
-.nh-wipe.is-revealing span:nth-child(2) { animation-delay: 0.12s; }
-.nh-wipe.is-revealing span:nth-child(3) { animation-delay: 0.18s; }
-
-@keyframes nhCover { from { transform: translateY(-118%) rotate(7deg); } to { transform: translateY(0) rotate(7deg); } }
-@keyframes nhReveal { from { transform: translateY(0) rotate(7deg); } to { transform: translateY(118%) rotate(7deg); } }
+/* 转场幕布的样式与关键帧统一在文件末尾「转场 v3」一节定义，此处不再重复。 */
 @keyframes nhDrift { to { background-position: 300px 0; } }
 @keyframes nhPing { 0% { box-shadow: 0 0 0 0 rgba(255, 43, 43, 0.6); } 70% { box-shadow: 0 0 0 10px rgba(255, 43, 43, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 43, 43, 0); } }
 @keyframes nhBlink { 0%, 62% { opacity: 1; } 63%, 100% { opacity: 0.3; } }
@@ -1373,8 +1358,34 @@ body.neo .nh-phi-list li:hover { transform: rotate(-1.2deg); }
 body.neo .nh-step:hover { transform: rotate(-1.5deg); }
 
 /* ==========================================================================
-   转场 v2：底层实色先盖满 → 切页 → 斜切片揭开，全程不露底
+   转场 v3「纸幕」：底层墨蓝先盖满 → 切页 → 三张纸一起滑落揭开
+   v2 用纯白 / 纯红 / 电光青整屏平铺，是刺眼的主因。这一版只做减法：
+   1) 配色：低饱和的墨蓝 — 雾蓝 — 陶土 — 纸白，明度阶梯 13/14/24 单调上升，
+      峰值彩度从 C*92.5 降到 24.6；最亮的一张只是纸白（L*77.5，不是纯白）；
+   2) 构图：最亮的纸只占右侧一条窄边（约 14% 屏宽），面积交给深色纸承担，
+      亮面不再铺满半屏；三张纸宽 52% / 48% / 19%、左缘 -10% / 40% / 87%，
+      相邻两张互相压 1%~2% 盖住抗锯齿缝，同一斜切角下拼满整屏；
+   3) 动效：保留 6° 硬边斜切（P3R 的刀感），不叠 alpha 羽化——半透明边缘会和
+      下层页面混出一层灰雾；三张纸同速起落（不做级联，避免旋转把纵向错位
+      变成纸缝），每张纸带 2px 墨线纸边；盖屏 0.30s、揭开 0.30s，总时长约 0.75s。
+   .nh-wipe 是全局元素，变量挂在 :root / html[data-theme="dark"]，
+   切页时不会因 data-page 变化而丢色。
    ========================================================================== */
+:root {
+  --nh-wipe-base: #1e3f5d;
+  --nh-wipe-1: #3a6076;
+  --nh-wipe-2: #a3745f;
+  --nh-wipe-3: #c8bfa9;
+  --nh-wipe-edge: rgba(3, 31, 100, 0.82);
+}
+html[data-theme="dark"] {
+  --nh-wipe-base: #14263a;
+  --nh-wipe-1: #26505f;
+  --nh-wipe-2: #8e6354;
+  --nh-wipe-3: #aca699;
+  --nh-wipe-edge: rgba(2, 10, 30, 0.9);
+}
+
 .nh-wipe {
   position: fixed;
   inset: 0;
@@ -1388,56 +1399,52 @@ body.neo .nh-step:hover { transform: rotate(-1.5deg); }
   content: "";
   position: absolute;
   inset: 0;
-  background: #031f64;
+  background: var(--nh-wipe-base, #1e3f5d);
   opacity: 0;
-  transition: opacity 0.1s linear;
+  transition: opacity 0.06s linear;
 }
 .nh-wipe span {
   position: absolute;
   top: -20%;
   height: 140%;
-  width: 44%;
-  transform: translateY(-126%) rotate(6deg);
-  will-change: transform;
+  transform: translate3d(0, -126%, 0) rotate(6deg);
+  box-shadow: inset 0 0 0 2px var(--nh-wipe-edge, rgba(3, 31, 100, 0.82));
 }
-.nh-wipe span:nth-child(1) { left: -10%; background: #22e0ff; }
-.nh-wipe span:nth-child(2) { left: 24%; background: #ff2b2b; }
-.nh-wipe span:nth-child(3) { left: 58%; background: #ffffff; }
+/* 左右两端各外扩 6vh：6° 旋转让上下边缘相对中线横向漂移 0.5H·tan6° ≈ 5.26vh，
+   竖屏（H/W > 1.14）时若不补这段，右下角会露出底层幕布的深色三角。外扩部分在
+   横屏视口外，所以可见构图不变；两条相邻边界的搭接量也不变。 */
+.nh-wipe span:nth-child(1) { left: calc(-10% - 6vh); width: calc(52% + 6vh); background: var(--nh-wipe-1, #3a6076); }
+.nh-wipe span:nth-child(2) { left: 40%; width: 48%; background: var(--nh-wipe-2, #a3745f); }
+.nh-wipe span:nth-child(3) { left: 87%; width: calc(19% + 6vh); background: var(--nh-wipe-3, #c8bfa9); }
 
 .nh-wipe.is-covering { visibility: visible; }
 .nh-wipe.is-covering::before { opacity: 1; }
-.nh-wipe.is-covering span { animation: nhCover 0.26s cubic-bezier(0.7, 0, 0.3, 1) forwards; }
-.nh-wipe.is-covering span:nth-child(2) { animation-delay: 0.04s; }
-.nh-wipe.is-covering span:nth-child(3) { animation-delay: 0.08s; }
+.nh-wipe.is-covering span { animation: nhCover 0.3s cubic-bezier(0.42, 0.62, 0.26, 1) forwards; will-change: transform; }
 
 .nh-wipe.is-revealing { visibility: visible; }
-.nh-wipe.is-revealing::before { opacity: 0; transition: opacity 0.12s linear; }
-.nh-wipe.is-revealing span { animation: nhReveal 0.3s cubic-bezier(0.7, 0, 0.3, 1) both; }
-.nh-wipe.is-revealing span:nth-child(1) { animation-delay: 0s; }
-.nh-wipe.is-revealing span:nth-child(2) { animation-delay: 0.06s; }
-.nh-wipe.is-revealing span:nth-child(3) { animation-delay: 0.1s; }
+.nh-wipe.is-revealing::before { opacity: 0; transition: opacity 0.06s linear; }
+.nh-wipe.is-revealing span { animation: nhReveal 0.3s cubic-bezier(0.4, 0, 0.2, 1) both; will-change: transform; }
 
 @keyframes nhCover {
-  from { transform: translateY(-126%) rotate(6deg); }
-  to { transform: translateY(0) rotate(6deg); }
+  from { transform: translate3d(0, -126%, 0) rotate(6deg); }
+  to { transform: translate3d(0, 0, 0) rotate(6deg); }
 }
 @keyframes nhReveal {
-  from { transform: translateY(0) rotate(6deg); }
-  to { transform: translateY(126%) rotate(6deg); }
+  from { transform: translate3d(0, 0, 0) rotate(6deg); }
+  to { transform: translate3d(0, 126%, 0) rotate(6deg); }
 }
 @keyframes nhPageIn {
-  from { transform: translateY(12px); }
+  from { transform: translate3d(0, 12px, 0); }
   to { transform: none; }
 }
 body.nh-enter main { animation: nhPageIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
 /* 路由切换时，页面内容直接就位（不淡入），避免在色带退场的瞬间出现"半透明页面" */
 body.nh-instant [data-stagger] { opacity: 1 !important; animation: none !important; }
 
-
 /* 首屏加载幕布：静态盖满，不播入场动画 */
 .nh-wipe.is-held { visibility: visible; }
 .nh-wipe.is-held::before { opacity: 1; }
-.nh-wipe.is-held span { animation: none !important; transform: translateY(0) rotate(6deg); }
+.nh-wipe.is-held span { animation: none !important; transform: translate3d(0, 0, 0) rotate(6deg); }
 
 /* ==========================================================================
    游戏式课程菜单 + 屏幕 HUD 边框 + 底部命令条

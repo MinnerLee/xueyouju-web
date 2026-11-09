@@ -397,7 +397,7 @@ export function initNeoShell() {
     wipe.classList.remove('is-revealing', 'is-covering');
     void wipe.offsetWidth;
     wipe.classList.add('is-covering');
-    // 覆盖动画：300ms + 80ms 级联，盖满后再切页
+    // 覆盖动画 0.30s，留 1 帧余量到 320ms 再切页，保证整屏盖实（与 neo.css 的 nhCover 对齐）
     wipeTimer = window.setTimeout(() => {
       if (hash) location.hash = hash;
       requestAnimationFrame(() => {
@@ -411,7 +411,7 @@ export function initNeoShell() {
           }, 400);
         });
       });
-    }, 300);
+    }, 320);
   };
 
   const playWipe = hash => {
@@ -443,7 +443,7 @@ export function initNeoShell() {
     wipeTimer = window.setTimeout(() => {
       wipe.classList.remove('is-revealing');
       document.body.classList.remove('nh-enter');
-    }, 460);
+    }, 400);
   });
 
   // 首次进入：从静态幕布揭开（等两帧让内容画好）
@@ -459,7 +459,7 @@ export function initNeoShell() {
         wipeTimer = window.setTimeout(() => {
           wipe.classList.remove('is-revealing');
           document.body.classList.remove('nh-enter');
-        }, 480);
+        }, 400);
       }));
     }
   }
