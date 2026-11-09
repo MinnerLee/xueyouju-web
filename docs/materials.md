@@ -58,3 +58,7 @@
 分类练习册编排说明标注其原创和新增整理内容采用 CC BY-NC-SA 4.0，且原始试题等第三方材料权利仍归原权利人。不能把整册当作 MIT 数据集合并；若以后公开选取内容，应按实际来源与许可单独处理并保留署名。
 
 本版本无上传入口，不会自动把 PDF 发送到模型服务。接入后端时应将本地路径、原文、OCR 中间文件、学习记录放到受访问控制的运行目录；不要放入公开仓库或 `dist/`。
+
+## 背景视频
+
+`assets/video/tide.webm`、`tide.mp4`、`tide-poster.jpg` 由 Pexels 免费素材 [Underwater Footage Of Rising Bubbles](https://www.pexels.com/video/underwater-footage-of-rising-bubbles-2632737/)（作者 James Cheney）剪辑而成：调为深蓝色调、压暗，首尾交叉淡化做成 12 秒无缝循环，缩放到 1280×720。素材按 [Pexels 许可](https://www.pexels.com/license/) 免费使用，不需要署名，这里注明来源以便核对；该许可不允许单独转售未经修改的素材。

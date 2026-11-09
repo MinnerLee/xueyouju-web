@@ -1,0 +1,470 @@
+/* ==========================================================================
+   THEME · 「深水」柔和版 P3R 视觉基座（全站共用）
+   - 只放：字体、设计令牌、背景视频层、页头页脚、通用控件、纸幕转场、HUD
+   - 页面级样式分别在 home.css（首页）与 pages.css（练习 / 记录 / 关于 / 助手）
+   设计原则（柔和版）：
+   1) 色彩：深海蓝为底，主强调是雾青 --p-accent，珊瑚 --p-select 只标「当前选中」，
+      不出现纯白大色块、纯红、电光青；
+   2) 形状：保留 P3R 的斜切与倾斜，但角度收小（大块 ≤2°，小标签 ≤4°），
+      硬投影改为半透明、偏移 ≤6px；
+   3) 动效：只用 transform / opacity，时长 200–460ms，无无限闪烁、无故障抖动；
+      prefers-reduced-motion 下全部静止，视频退回封面图。
+   ========================================================================== */
+
+@font-face {
+  font-family: "Neo Display";
+  src: url("../assets/fonts/archivo-black-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neo Cond";
+  src: url("../assets/fonts/oswald-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- 0. 令牌 ---------- */
+:root {
+  --p-display: "Neo Display", "Oswald", "Arial Black", sans-serif;
+  --p-cond: "Neo Cond", "Oswald", "Arial Narrow", sans-serif;
+  --p-cjk: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --p-body: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --p-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+
+  --p-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --p-dur: 240ms;
+  --p-header: 76px;
+  --p-tilt: -1.5deg;
+  --p-tilt-sm: -3deg;
+  --p-radius: 2px;
+  --p-max: 1240px;
+
+  /* 默认（浅色「白昼」）：蓝底视频 + 纸白面板 */
+  --p-solid: #1b4a86;
+  --p-scrim-top: rgba(18, 62, 120, 0.30);
+  --p-scrim-bottom: rgba(8, 30, 70, 0.62);
+  --p-scrim-page: rgba(10, 36, 78, 0.58);
+  --p-on-bg: #f3f7fb;
+  --p-on-bg-soft: #d2e2f1;
+  --p-on-bg-muted: #a8c1db;
+  --p-line: rgba(220, 235, 250, 0.26);
+  --p-accent: #9fd6ea;
+  --p-accent-ink: #0d2a4c;
+  --p-select: #e8907f;
+  --p-select-ink: #3a130c;
+  --p-panel: rgba(243, 247, 251, 0.94);
+  --p-panel-2: rgba(226, 235, 244, 0.96);
+  --p-panel-ink: #13294b;
+  --p-panel-text: #2f4566;
+  --p-panel-muted: #5f7593;
+  --p-panel-line: rgba(19, 41, 75, 0.14);
+  --p-panel-link: #1f5c9e;
+  --p-glass: rgba(9, 30, 62, 0.62);
+  --p-shadow: 0 14px 36px rgba(3, 14, 36, 0.22);
+  --p-shadow-hard: 6px 6px 0 rgba(4, 18, 44, 0.24);
+  --p-text-shadow: 0 2px 14px rgba(3, 14, 36, 0.35);
+  --p-ok: #7fcfa8;
+  --p-warn: #f0c27a;
+  --p-error: #f2a3a3;
+
+  /* 纸幕转场 */
+  --nh-wipe-base: #142f52;
+  --nh-wipe-1: #284e7a;
+  --nh-wipe-2: #5c7fa6;
+  --nh-wipe-3: #d6e1ea;
+  --nh-wipe-edge: rgba(8, 24, 52, 0.7);
+}
+
+html[data-theme="dark"] {
+  --p-solid: #081a33;
+  --p-scrim-top: rgba(4, 12, 30, 0.52);
+  --p-scrim-bottom: rgba(3, 9, 24, 0.82);
+  --p-scrim-page: rgba(4, 12, 28, 0.78);
+  --p-on-bg: #e8f0f8;
+  --p-on-bg-soft: #c3d4e6;
+  --p-on-bg-muted: #8ea6c0;
+  --p-line: rgba(150, 190, 230, 0.2);
+  --p-accent: #86c7df;
+  --p-accent-ink: #061a30;
+  --p-select: #d98273;
+  --p-select-ink: #2a0d08;
+  --p-panel: rgba(12, 30, 56, 0.86);
+  --p-panel-2: rgba(18, 40, 70, 0.9);
+  --p-panel-ink: #e6eef7;
+  --p-panel-text: #c2d2e3;
+  --p-panel-muted: #8ba2bb;
+  --p-panel-line: rgba(150, 190, 230, 0.18);
+  --p-panel-link: #9fd2e6;
+  --p-glass: rgba(6, 18, 38, 0.7);
+  --p-shadow: 0 16px 40px rgba(0, 4, 14, 0.45);
+  --p-shadow-hard: 6px 6px 0 rgba(0, 4, 14, 0.4);
+  --p-text-shadow: 0 2px 16px rgba(0, 4, 14, 0.5);
+
+  --nh-wipe-base: #0b1d36;
+  --nh-wipe-1: #17365c;
+  --nh-wipe-2: #3d5f86;
+  --nh-wipe-3: #a9b9c9;
+  --nh-wipe-edge: rgba(2, 8, 22, 0.85);
+}
+
+/* ---------- 1. 基底 ---------- */
+html.neo { background: var(--p-solid); color-scheme: light; }
+html.neo[data-theme="dark"] { color-scheme: dark; }
+body.neo {
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--p-solid);
+  color: var(--p-on-bg);
+  font-family: var(--p-body);
+}
+body.neo main,
+body.neo .site-footer { position: relative; z-index: 1; }
+body.neo main:empty { min-height: calc(100vh - var(--p-header) - 92px); }
+body.neo ::selection { background: var(--p-accent); color: var(--p-accent-ink); }
+
+/* ---------- 2. 背景视频层 ---------- */
+.p-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--p-solid) var(--p-poster) center / cover no-repeat;
+}
+.p-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.p-bg.is-playing .p-bg-video { opacity: 1; }
+.p-bg.is-off .p-bg-video { opacity: 0; }
+.p-bg-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at 50% 38%, transparent 40%, var(--p-scrim-bottom) 100%),
+    linear-gradient(180deg, var(--p-scrim-top) 0%, var(--p-scrim-bottom) 100%);
+  transition: background-color 0.6s ease;
+}
+/* 内容页：再压一层，阅读优先 */
+body.neo:not([data-page="home"]) .p-bg-scrim { background-color: var(--p-scrim-page); }
+
+/* ---------- 3. 页头 ---------- */
+body.neo .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  max-width: none;
+  height: var(--p-header);
+  margin: 0;
+  padding-inline: clamp(20px, 3.6vw, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border: 0;
+  background: linear-gradient(180deg, var(--p-glass) 0%, transparent 100%);
+  /* 旧 styles.css 给页头加了毛玻璃，压在视频上会逐帧重算 */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.neo .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 8px;
+  font-family: var(--p-cjk);
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--p-panel-ink);
+  background: var(--p-panel);
+  transform: rotate(var(--p-tilt));
+  box-shadow: var(--p-shadow-hard);
+}
+body.neo .brand img { width: 30px; height: 30px; padding: 5px; background: #13294b; filter: invert(1); }
+html[data-theme="dark"] body.neo .brand img { filter: none; background: #081a33; }
+body.neo .brand small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--p-cond);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--p-panel-muted);
+}
+body.neo .site-header nav { display: flex; gap: 4px; align-items: center; }
+body.neo .site-header nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  font-family: var(--p-cjk);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--p-on-bg-soft);
+  text-shadow: var(--p-text-shadow);
+  transition: color var(--p-dur) var(--p-ease), background var(--p-dur) var(--p-ease);
+}
+body.neo .site-header nav a::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 3px;
+  background: var(--p-select);
+  transform: scaleX(0) skewX(-20deg);
+  transform-origin: left;
+  transition: transform var(--p-dur) var(--p-ease);
+}
+body.neo .site-header nav a:hover { color: var(--p-on-bg); }
+body.neo .site-header nav a:hover::after { transform: scaleX(0.5) skewX(-20deg); }
+body.neo .site-header nav a[aria-current] {
+  color: var(--p-panel-ink);
+  background: var(--p-panel);
+  text-shadow: none;
+  transform: rotate(var(--p-tilt));
+  box-shadow: var(--p-shadow-hard);
+}
+body.neo .site-header nav a[aria-current]::after { transform: scaleX(1) skewX(-20deg); }
+body.neo .header-actions { display: flex; align-items: center; gap: 6px; }
+body.neo .header-github,
+body.neo .theme-toggle {
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: var(--p-cond);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--p-on-bg-soft);
+  cursor: pointer;
+  transition: color var(--p-dur) var(--p-ease), border-color var(--p-dur) var(--p-ease);
+}
+body.neo .header-github:hover,
+body.neo .theme-toggle:hover { color: var(--p-on-bg); border-color: var(--p-line); }
+
+/* ---------- 4. 页脚 ---------- */
+body.neo .site-footer {
+  max-width: none;
+  margin: 0;
+  padding: 24px clamp(20px, 4vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  border-top: 1px solid var(--p-line);
+  background: var(--p-glass);
+  font-family: var(--p-cjk);
+  font-size: 12px;
+  color: var(--p-on-bg-muted);
+}
+body.neo .site-footer div { display: flex; flex-wrap: wrap; gap: 18px; }
+/* 首页右下角有 HUD 命令条，页脚给它让出位置 */
+@media (min-width: 901px) {
+  body.neo[data-page="home"] .site-footer { padding-right: 300px; padding-bottom: 34px; }
+}
+body.neo .footer-brand { font-weight: 900; color: var(--p-on-bg); }
+body.neo .footer-brand span { margin-left: 8px; font-weight: 400; color: var(--p-on-bg-muted); }
+body.neo .site-footer a:hover { color: var(--p-accent); }
+
+/* ---------- 5. 通用控件 ---------- */
+body.neo .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 0;
+  border-radius: var(--p-radius);
+  font-family: var(--p-cjk);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transform: rotate(var(--p-tilt));
+  transition: background var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease), transform var(--p-dur) var(--p-ease), box-shadow var(--p-dur) var(--p-ease);
+}
+body.neo .button.primary { background: var(--p-accent); color: var(--p-accent-ink); box-shadow: var(--p-shadow-hard); }
+body.neo .button.primary:hover:not(:disabled) { background: var(--p-select); color: var(--p-select-ink); transform: rotate(var(--p-tilt)) translate(-2px, -2px); }
+body.neo .button.secondary { background: var(--p-panel); color: var(--p-panel-ink); box-shadow: var(--p-shadow-hard); }
+body.neo .button.secondary:hover:not(:disabled) { background: var(--p-panel-2); transform: rotate(var(--p-tilt)) translate(-2px, -2px); }
+body.neo .button:active:not(:disabled) { transform: rotate(var(--p-tilt)) translate(1px, 1px); box-shadow: none; }
+body.neo .button:disabled { opacity: 0.55; cursor: not-allowed; }
+body.neo .text-link,
+body.neo .text-button { color: var(--p-accent); font-weight: 700; }
+body.neo .text-link:hover,
+body.neo .text-button:hover:not(:disabled) { color: var(--p-on-bg); }
+
+body.neo :focus-visible { outline: 2px solid var(--p-accent); outline-offset: 3px; }
+body.neo .skip-link { background: var(--p-panel); color: var(--p-panel-ink); }
+
+/* 吐司 */
+body.neo .toast {
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  border-left: 4px solid var(--p-select);
+  box-shadow: var(--p-shadow);
+  border-radius: var(--p-radius);
+}
+
+/* ---------- 6. 纸幕转场 ----------
+   盖屏：底层墨蓝淡入 + 三张纸以 6° 斜切从上落下；揭开：三张纸继续下落离场。
+   柔和版：配色只用蓝阶 + 纸白，时长放慢到 0.36s / 0.4s。 */
+.nh-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  overflow: hidden;
+  visibility: hidden;
+}
+.nh-wipe::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--nh-wipe-base);
+  opacity: 0;
+  transition: opacity 0.12s linear;
+}
+.nh-wipe span {
+  position: absolute;
+  top: -20%;
+  height: 140%;
+  transform: translate3d(0, -126%, 0) rotate(6deg);
+  box-shadow: inset 0 0 0 2px var(--nh-wipe-edge);
+}
+/* 左右两端各外扩 6vh，补足竖屏时 6° 旋转露出的角 */
+.nh-wipe span:nth-child(1) { left: calc(-10% - 6vh); width: calc(52% + 6vh); background: var(--nh-wipe-1); }
+.nh-wipe span:nth-child(2) { left: 40%; width: 48%; background: var(--nh-wipe-2); }
+.nh-wipe span:nth-child(3) { left: 87%; width: calc(19% + 6vh); background: var(--nh-wipe-3); }
+
+.nh-wipe.is-covering,
+.nh-wipe.is-revealing,
+.nh-wipe.is-held { visibility: visible; }
+.nh-wipe.is-covering::before,
+.nh-wipe.is-held::before { opacity: 1; }
+.nh-wipe.is-covering span { animation: nhCover 0.36s cubic-bezier(0.42, 0.62, 0.26, 1) forwards; will-change: transform; }
+.nh-wipe.is-revealing span { animation: nhReveal 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; will-change: transform; }
+.nh-wipe.is-held span { animation: none; transform: translate3d(0, 0, 0) rotate(6deg); }
+
+@keyframes nhCover {
+  from { transform: translate3d(0, -126%, 0) rotate(6deg); }
+  to { transform: translate3d(0, 0, 0) rotate(6deg); }
+}
+@keyframes nhReveal {
+  from { transform: translate3d(0, 0, 0) rotate(6deg); }
+  to { transform: translate3d(0, 126%, 0) rotate(6deg); }
+}
+@keyframes nhPageIn {
+  from { opacity: 0.4; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: none; }
+}
+body.nh-enter main { animation: nhPageIn 0.42s var(--p-ease) both; }
+/* 路由切换时页面内容直接就位，避免退场瞬间露出半透明页面 */
+body.nh-instant [data-stagger] { opacity: 1 !important; animation: none !important; }
+
+/* ---------- 7. HUD：屏幕边框 + 命令条（只在首页出现） ---------- */
+.nh-frame {
+  position: fixed;
+  inset: 10px;
+  z-index: 45;
+  display: none;
+  pointer-events: none;
+  border: 1px solid var(--p-line);
+}
+body.neo[data-page="home"] .nh-frame { display: block; }
+.nh-frame-c { position: absolute; width: 18px; height: 18px; border: 2px solid var(--p-accent); opacity: 0.8; }
+.nh-frame-c.tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.nh-frame-c.tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+.nh-frame-c.bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+.nh-frame-c.br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.nh-frame-tag {
+  position: absolute;
+  left: 24px;
+  bottom: -7px;
+  padding: 0 8px;
+  font-family: var(--p-cond);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--p-on-bg-muted);
+  background: var(--p-solid);
+}
+
+.nh-hud {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 56;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 10px 14px 9px 16px;
+  background: var(--p-glass);
+  border-left: 3px solid var(--p-select);
+  font-family: var(--p-cond);
+  color: var(--p-on-bg);
+  transform: skewX(-6deg);
+}
+body.neo[data-page="home"] .nh-hud { display: flex; }
+.nh-hud > * { transform: skewX(6deg); }
+.nh-hud-top { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; }
+.nh-hud-title { font-style: italic; font-size: 18px; }
+.nh-hud-sub { font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--p-accent); }
+.nh-hud-actions { display: flex; align-items: center; gap: 8px; }
+.nh-hud-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--p-line);
+  background: transparent;
+  color: var(--p-on-bg);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: background var(--p-dur) ease, opacity var(--p-dur) ease;
+}
+.nh-hud-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.nh-hud-btn[aria-pressed="true"] b { color: var(--p-accent); }
+.nh-hud-btn.is-off { opacity: 0.6; border-style: dashed; }
+.nh-hud-hint { font-family: var(--p-cjk); font-size: 11px; font-weight: 600; color: var(--p-on-bg-soft); }
+
+/* ---------- 8. 响应式 ---------- */
+@media (max-width: 900px) {
+  :root { --p-header: 64px; }
+  body.neo .site-header { padding-inline: 16px; gap: 12px; }
+  body.neo .brand { font-size: 16px; padding: 5px 10px 5px 6px; }
+  body.neo .brand small, body.neo .header-github { display: none; }
+  .nh-frame, .nh-hud, body.neo[data-page="home"] .nh-frame, body.neo[data-page="home"] .nh-hud { display: none; }
+}
+@media (max-width: 680px) {
+  body.neo .site-header { flex-wrap: wrap; height: auto; padding-block: 10px; }
+  body.neo .site-header nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; }
+  body.neo .site-header nav a { flex: none; padding: 0 12px; font-size: 13px; }
+}
+
+/* ---------- 9. 无障碍：减少动态效果 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body.neo *, body.neo *::before, body.neo *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .nh-wipe { display: none; }
+  .p-bg-video { display: none; }
+}

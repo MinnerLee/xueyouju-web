@@ -38,6 +38,8 @@ npm run package   # 从干净的 Git HEAD 生成源码 ZIP
 
 | 文件 | 作用 |
 | --- | --- |
+| src/theme.css、src/home.css、src/pages.css | 柔和版 P3R 视觉：令牌与壳层、首页、内容页（规范见 [设计](docs/design.md)） |
+| src/shell.js、src/video-bg.js | 纸幕转场、HUD 与音效；水下背景视频 |
 | src/chat.js、src/chat.css | 聊天工作台和手机布局 |
 | src/chat-store.js、src/chat-render.js | 会话存储、清洗与公式 |
 | server/prompt.js | 完整学习助手提示词 |
