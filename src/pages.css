@@ -1,0 +1,2686 @@
+/* ==========================================================================
+   PAGES · 内页「深水纸片」皮肤
+   - 覆盖：示例练习 learn / 学习记录 records / 关于 about / AI 助手 chat
+   - 只使用 theme.css 的 --p-* 令牌
+   - 结构、grid / flex 布局沿用 styles.css 与 chat.css，这里主要重绘颜色、
+     字体、边框、投影，以及 P3R 式的斜切楔形与纸片层
+   - 柔和约束：无无限动画；只过渡 transform / opacity / color / background-color；
+     不使用 backdrop-filter、mix-blend-mode、filter: blur
+   ========================================================================== */
+
+/* ---------- 0. 通用面板 / 页面文字 / 表单 ---------- */
+
+/* 页面底色交给 theme.css 的 body.neo；这里只压掉旧内页的整块纸色 */
+body.neo[data-page="learn"],
+body.neo[data-page="records"],
+body.neo[data-page="about"],
+body.neo[data-page="chat"] {
+  background: var(--p-solid);
+  color: var(--p-panel-text);
+}
+
+/* 直接压在视频上的英文眉标 */
+body.neo:not([data-page="home"]) .eyebrow {
+  font-family: var(--p-cond);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--p-accent);
+  text-shadow: var(--p-text-shadow);
+}
+
+/* 页头大标题：中文用 --p-cjk，英文眉标保持压缩字体 */
+body.neo[data-page="learn"] .lesson-title h1,
+body.neo[data-page="records"] .page-heading h1,
+body.neo[data-page="about"] .about-page > h1,
+body.neo[data-page="chat"] .ai-access-intro h1,
+body.neo[data-page="about"] .about-materials h2 {
+  font-family: var(--p-cjk);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+body.neo[data-page="learn"] .lesson-title h1,
+body.neo[data-page="records"] .page-heading h1,
+body.neo[data-page="about"] .about-page > h1,
+body.neo[data-page="chat"] .ai-access-intro h1 {
+  color: var(--p-on-bg);
+  text-shadow: var(--p-text-shadow);
+}
+
+/* 视频上的说明文字：统一 on-bg 系列，保留文字投影 */
+body.neo[data-page="learn"] .lesson-title p,
+body.neo[data-page="learn"] .breadcrumbs,
+body.neo[data-page="records"] .page-heading p,
+body.neo[data-page="records"] .privacy-note,
+body.neo[data-page="about"] .about-lead,
+body.neo[data-page="chat"] .ai-access-intro p,
+body.neo[data-page="learn"] .evidence-note p,
+body.neo[data-page="learn"] .session-status p {
+  color: var(--p-on-bg-soft);
+  text-shadow: var(--p-text-shadow);
+}
+
+/* 纸片层：元素本身透明，用 ::before 轻微倾斜地铺纸，
+   内容保持水平；这样正文、聊天消息、表单都不会被旋转 */
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--p-panel-text);
+}
+
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--p-panel);
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  box-shadow: var(--p-shadow-hard);
+  transform: rotate(-0.45deg);
+  pointer-events: none;
+}
+
+body.neo[data-page="learn"] .course-sidebar::before { transform: rotate(-0.7deg); }
+body.neo[data-page="learn"] .evidence-card::before { transform: rotate(0.6deg); }
+body.neo[data-page="records"] .stats::before { transform: rotate(-0.4deg); }
+body.neo[data-page="records"] .empty-state::before { transform: rotate(0.55deg); }
+body.neo[data-page="about"] .panel:nth-child(even)::before { transform: rotate(0.6deg); }
+body.neo[data-page="about"] .panel:nth-child(odd)::before { transform: rotate(-0.6deg); }
+body.neo[data-page="about"] .about-materials::before { transform: rotate(-0.35deg); }
+body.neo[data-page="about"] .open-banner::before { transform: rotate(-0.8deg); }
+body.neo[data-page="chat"] .ai-access-card::before { transform: rotate(-1deg); }
+
+/* 纸片上的文字层级 */
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) h2,
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) h3,
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) strong {
+  color: var(--p-panel-ink);
+}
+
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) p,
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) li {
+  color: var(--p-panel-text);
+}
+
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) small,
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(.panel, .course-sidebar, .evidence-card, .stats, .empty-state, .about-materials, .open-banner, .ai-access-card) .muted {
+  color: var(--p-panel-muted);
+}
+
+/* 纸片内的链接 */
+body.neo:not([data-page="home"]) .panel .text-link,
+body.neo[data-page="learn"] .course-sidebar .text-link,
+body.neo[data-page="learn"] .evidence-card .text-link,
+body.neo[data-page="records"] .record .text-link,
+body.neo[data-page="about"] .about-materials .text-link,
+body.neo[data-page="chat"] .chat-context .text-link,
+body.neo[data-page="chat"] .ai-access-back {
+  color: var(--p-panel-link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-shadow: none;
+}
+
+body.neo:not([data-page="home"]) .panel .text-link:hover,
+body.neo[data-page="learn"] .course-sidebar .text-link:hover,
+body.neo[data-page="learn"] .evidence-card .text-link:hover,
+body.neo[data-page="records"] .record .text-link:hover,
+body.neo[data-page="about"] .about-materials .text-link:hover,
+body.neo[data-page="chat"] .chat-context .text-link:hover,
+body.neo[data-page="chat"] .ai-access-back:hover {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="learn"] .panel .text-button {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="learn"] .panel .text-button:hover:not(:disabled) {
+  color: var(--p-panel-ink);
+}
+
+/* 纸片上的次级按钮：补一圈纸边，避免和面板糊在一起 */
+body.neo[data-page="learn"] .panel .button.secondary,
+body.neo[data-page="records"] .record .button.secondary,
+body.neo[data-page="about"] .panel .button.secondary,
+body.neo[data-page="chat"] .chat-toolbar .button.secondary {
+  background: var(--p-panel-2);
+  border: 1px solid var(--p-panel-line);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="learn"] .panel .button.secondary:hover:not(:disabled),
+body.neo[data-page="records"] .record .button.secondary:hover:not(:disabled),
+body.neo[data-page="about"] .panel .button.secondary:hover:not(:disabled),
+body.neo[data-page="chat"] .chat-toolbar .button.secondary:hover:not(:disabled) {
+  background: var(--p-panel);
+  border-color: var(--p-accent);
+  color: var(--p-panel-ink);
+}
+
+/* 标签 */
+body.neo:not([data-page="home"]) .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border: 1px solid var(--p-panel-line);
+  border-radius: 0;
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  font-family: var(--p-cjk);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  text-shadow: none;
+  transform: none;
+}
+
+body.neo:not([data-page="home"]) .green-tag {
+  border-left: 3px solid var(--p-ok);
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+}
+
+/* 表单：清晰的纸面、纸边与键盘焦点 */
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(
+    input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):not([type="search"]),
+    textarea,
+    select
+  ) {
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  outline-offset: 2px;
+}
+
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(
+    input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):not([type="search"]),
+    textarea,
+    select
+  ):hover {
+  border-color: var(--p-accent);
+}
+
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(
+    input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):not([type="search"]),
+    textarea,
+    select
+  ):focus-visible {
+  border-color: var(--p-accent);
+  outline: 2px solid var(--p-accent);
+  outline-offset: 2px;
+}
+
+body.neo:is([data-page="learn"], [data-page="records"], [data-page="about"], [data-page="chat"])
+  :is(input, textarea, select)::placeholder {
+  color: var(--p-panel-muted);
+  opacity: 1;
+}
+
+body.neo:is([data-page="learn"], [data-page="chat"]) input[type="radio"],
+body.neo:is([data-page="learn"], [data-page="chat"]) input[type="checkbox"] {
+  accent-color: var(--p-select);
+}
+
+/* 页脚与页面主体间距的局部微调（不重写壳层样式） */
+body.neo[data-page="learn"] .workspace,
+body.neo[data-page="records"] .records-page,
+body.neo[data-page="about"] .about-page {
+  min-width: 0;
+}
+
+/* ---------- 1. AI 学习助手 · 未解锁入口 ---------- */
+
+body.neo[data-page="chat"] .ai-access {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  align-items: center;
+  gap: clamp(32px, 7vw, 110px);
+  max-width: 1200px;
+  min-height: calc(100dvh - var(--p-header));
+  margin: 0 auto;
+  padding: 64px 40px;
+}
+
+body.neo[data-page="chat"] .ai-access-intro,
+body.neo[data-page="chat"] .ai-access-card {
+  min-width: 0;
+}
+
+body.neo[data-page="chat"] .ai-access-intro .eyebrow {
+  color: var(--p-accent);
+  text-shadow: var(--p-text-shadow);
+}
+
+body.neo[data-page="chat"] .ai-access-intro h1 {
+  margin: 22px 0;
+  font-size: clamp(36px, 4.6vw, 62px);
+}
+
+body.neo[data-page="chat"] .ai-access-intro p {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+body.neo[data-page="chat"] .ai-access-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+body.neo[data-page="chat"] .ai-access-tags span {
+  padding: 6px 12px;
+  border: 1px solid var(--p-line);
+  color: var(--p-on-bg-soft);
+  font-family: var(--p-cjk);
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: var(--p-text-shadow);
+}
+
+body.neo[data-page="chat"] .ai-access-card {
+  padding: clamp(24px, 3vw, 42px);
+}
+
+body.neo[data-page="chat"] .ai-access-card::before {
+  border-top: 4px solid var(--p-accent);
+}
+
+body.neo[data-page="chat"] .ai-access-index {
+  display: inline-block;
+  color: var(--p-panel-link);
+  font-family: var(--p-cond);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+body.neo[data-page="chat"] .ai-access-card h2 {
+  margin: 16px 0 24px;
+  font-family: var(--p-cjk);
+  font-size: 25px;
+  line-height: 1.35;
+}
+
+body.neo[data-page="chat"] .ai-access-card label {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+body.neo[data-page="chat"] .ai-access-card input {
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 15px;
+  font-family: var(--p-body);
+  font-size: 14px;
+}
+
+#ai-access-help {
+  margin-top: 13px;
+  color: var(--p-panel-muted);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+#ai-access-error {
+  min-height: 0;
+  margin: 12px 0 16px;
+  color: var(--p-error);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+#ai-access-error:empty {
+  margin: 8px 0 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+#ai-access-error:not(:empty) {
+  padding: 9px 11px;
+  border-left: 3px solid var(--p-error);
+  background: var(--p-glass);
+  text-shadow: none;
+}
+
+body.neo[data-page="chat"] .ai-access-card .button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 50px;
+}
+
+body.neo[data-page="chat"] .ai-access-card .button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+body.neo[data-page="chat"] .ai-access-back {
+  display: inline-block;
+  margin-top: 22px;
+  font-size: 13px;
+}
+
+/* ---------- 2. 示例练习 ---------- */
+
+body.neo[data-page="learn"] .workspace {
+  padding-top: 30px;
+  padding-bottom: 56px;
+  gap: 26px;
+}
+
+body.neo[data-page="learn"] .course-sidebar {
+  align-self: start;
+  padding: 22px 20px;
+}
+
+body.neo[data-page="learn"] .course-sidebar .eyebrow {
+  color: var(--p-panel-link);
+  text-shadow: none;
+}
+
+body.neo[data-page="learn"] .course-sidebar h2 {
+  margin: 8px 0 20px;
+  font-family: var(--p-cjk);
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+body.neo[data-page="learn"] .search-label {
+  color: var(--p-panel-muted);
+  font-family: var(--p-cond), var(--p-cjk);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+body.neo[data-page="learn"] .search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 6px 0 22px;
+  padding: 5px 9px;
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  box-shadow: none;
+}
+
+body.neo[data-page="learn"] .search:focus-within {
+  border-color: var(--p-accent);
+  box-shadow: 0 0 0 2px var(--p-accent);
+}
+
+body.neo[data-page="learn"] .search > span {
+  color: var(--p-panel-muted);
+  font-size: 20px;
+  line-height: 1;
+}
+
+body.neo[data-page="learn"] .search input,
+body.neo[data-page="learn"] .search input:hover {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--p-panel-ink);
+  font-size: 12px;
+}
+
+body.neo[data-page="learn"] .search input:focus-visible {
+  outline: none;
+}
+
+body.neo[data-page="learn"] .topic-group {
+  margin-bottom: 22px;
+}
+
+body.neo[data-page="learn"] .topic-group h3 {
+  margin-bottom: 8px;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cond), var(--p-cjk);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* P3R 编号菜单的轻量版：悬停时左侧伸出斜切楔形，文字右移 */
+body.neo[data-page="learn"] .topic-link,
+body.neo[data-page="chat"] .chat-session {
+  position: relative;
+  min-width: 0;
+  border-radius: 0;
+  color: var(--p-panel-text);
+  font-size: 12px;
+  line-height: 1.5;
+  text-shadow: none;
+  transition: color var(--p-dur) var(--p-ease), background-color var(--p-dur) var(--p-ease),
+    transform var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="learn"] .topic-link::before,
+body.neo[data-page="chat"] .chat-session::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 9px;
+  height: 1.15em;
+  background: var(--p-select);
+  clip-path: polygon(0 0, 100% 0, 70% 100%, 0 100%);
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--p-dur) var(--p-ease), opacity var(--p-dur) var(--p-ease);
+  pointer-events: none;
+}
+
+body.neo[data-page="learn"] .topic-link:hover,
+body.neo[data-page="chat"] .chat-session:hover {
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  transform: translateX(4px);
+}
+
+body.neo[data-page="learn"] .topic-link:hover::before,
+body.neo[data-page="learn"] .topic-link.selected::before,
+body.neo[data-page="chat"] .chat-session:hover::before,
+body.neo[data-page="chat"] .chat-session.active::before {
+  opacity: 1;
+  transform: translateY(-50%) scaleX(1);
+}
+
+body.neo[data-page="learn"] .topic-link.selected {
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--p-select);
+}
+
+body.neo[data-page="learn"] .topic-link > span:last-child {
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="learn"] .topic-link.selected > span:last-child {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="learn"] .topic-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border: 1px solid var(--p-panel-muted);
+  border-radius: 50%;
+  background: transparent;
+}
+
+body.neo[data-page="learn"] .topic-dot.done {
+  border-color: var(--p-ok);
+  background: var(--p-ok);
+}
+
+body.neo[data-page="learn"] .topic-link.selected .topic-dot {
+  border-color: var(--p-select);
+  background: var(--p-select);
+}
+
+body.neo[data-page="learn"] #no-topics {
+  color: var(--p-panel-muted);
+  font-size: 12px;
+}
+
+body.neo[data-page="learn"] .sidebar-note {
+  margin: 28px 0 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--p-panel-line);
+}
+
+body.neo[data-page="learn"] .sidebar-note > span {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="learn"] .sidebar-note p {
+  color: var(--p-panel-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* 主学习区 */
+body.neo[data-page="learn"] .learning-main {
+  min-width: 0;
+}
+
+body.neo[data-page="learn"] .breadcrumbs {
+  margin-bottom: 12px;
+  font-family: var(--p-cond), var(--p-cjk);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--p-on-bg-soft);
+}
+
+body.neo[data-page="learn"] .breadcrumbs span {
+  color: var(--p-on-bg-muted);
+}
+
+body.neo[data-page="learn"] .lesson-title {
+  gap: 16px;
+}
+
+body.neo[data-page="learn"] .lesson-title h1 {
+  font-size: clamp(27px, 2.7vw, 38px);
+}
+
+body.neo[data-page="learn"] .lesson-title p {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+body.neo[data-page="learn"] .lesson-title .green-tag {
+  flex: none;
+  padding: 5px 11px;
+  border: 1px solid var(--p-line);
+  border-left: 3px solid var(--p-ok);
+  background: var(--p-glass);
+  color: var(--p-on-bg);
+  font-size: 11px;
+  text-shadow: var(--p-text-shadow);
+}
+
+body.neo[data-page="learn"] .demo-notice {
+  margin: 18px 0;
+  padding: 11px 14px;
+  border: 1px solid var(--p-line);
+  border-left: 4px solid var(--p-accent);
+  border-radius: 0;
+  background: var(--p-glass);
+  color: var(--p-on-bg-soft);
+  font-size: 12px;
+  line-height: 1.75;
+  text-shadow: var(--p-text-shadow);
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="learn"] .demo-notice a {
+  color: var(--p-accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+body.neo[data-page="learn"] .demo-notice a:hover {
+  color: var(--p-on-bg);
+}
+
+body.neo[data-page="learn"] .warning {
+  margin: 14px 0;
+  padding: 11px 14px;
+  border: 1px solid var(--p-panel-line);
+  border-left: 4px solid var(--p-error);
+  background: var(--p-panel);
+  color: var(--p-panel-text);
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  box-shadow: var(--p-shadow);
+}
+
+body.neo[data-page="learn"] .panel {
+  margin-bottom: 20px;
+  padding: 26px;
+}
+
+body.neo[data-page="learn"] .panel-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cond), var(--p-cjk);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+body.neo[data-page="learn"] .panel-label .step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 21px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 0;
+  background: var(--p-accent);
+  color: var(--p-accent-ink);
+  font-family: var(--p-cond);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  transform: skewX(-4deg);
+}
+
+body.neo[data-page="learn"] .question-panel h2 {
+  margin: 14px 0 12px;
+  font-family: var(--p-cjk);
+  font-size: clamp(21px, 2vw, 27px);
+  line-height: 1.5;
+}
+
+body.neo[data-page="learn"] .panel > p {
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+body.neo[data-page="learn"] .panel pre {
+  max-width: 100%;
+  margin: 14px 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  border: 1px solid var(--p-panel-line);
+  border-left: 3px solid var(--p-accent);
+  border-radius: 0;
+  background: var(--p-panel-2);
+  box-shadow: none;
+}
+
+body.neo[data-page="learn"] .panel pre code {
+  color: var(--p-panel-ink);
+  font-family: var(--p-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+body.neo[data-page="learn"] .panel form > label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+body.neo[data-page="learn"] .panel textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: var(--p-body);
+  font-size: 14px;
+  line-height: 1.8;
+  resize: vertical;
+}
+
+body.neo[data-page="learn"] .form-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+body.neo[data-page="learn"] .form-bottom small {
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+body.neo[data-page="learn"] .hint {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--p-panel-line);
+  border-left: 4px solid var(--p-warn);
+  border-radius: 0;
+  background: var(--p-panel-2);
+}
+
+body.neo[data-page="learn"] .hint > span {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 0;
+  background: var(--p-warn);
+  color: var(--p-accent-ink);
+  font-family: var(--p-cjk);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+body.neo[data-page="learn"] .hint p {
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="learn"] .hint-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin-top: 14px;
+}
+
+body.neo[data-page="learn"] .solution {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--p-panel-line);
+  border-left: 4px solid var(--p-warn);
+  background: var(--p-panel-2);
+}
+
+body.neo[data-page="learn"] .solution strong {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--p-cjk);
+}
+
+body.neo[data-page="learn"] .solution p {
+  font-size: 13.5px;
+  line-height: 1.85;
+}
+
+body.neo[data-page="learn"] .quiz-panel fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body.neo[data-page="learn"] .quiz-panel legend {
+  margin: 14px 0 12px;
+  padding: 0;
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+body.neo[data-page="learn"] .options {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+body.neo[data-page="learn"] .option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  font-family: var(--p-body);
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  cursor: pointer;
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease),
+    transform var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="learn"] .option:hover {
+  border-color: var(--p-accent);
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  transform: translateX(2px);
+}
+
+body.neo[data-page="learn"] .option:has(input:checked) {
+  border-color: var(--p-select);
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  box-shadow: inset 4px 0 0 var(--p-select);
+}
+
+body.neo[data-page="learn"] .option:has(input:focus-visible) {
+  outline: 2px solid var(--p-accent);
+  outline-offset: 2px;
+}
+
+body.neo[data-page="learn"] .option-letter {
+  flex: none;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cond);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+body.neo[data-page="learn"] .option:has(input:checked) .option-letter {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="learn"] .option.correct {
+  border-color: var(--p-ok);
+  box-shadow: inset 4px 0 0 var(--p-ok);
+}
+
+body.neo[data-page="learn"] .option.correct .option-letter {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="learn"] .option.incorrect {
+  border-color: var(--p-error);
+  box-shadow: inset 4px 0 0 var(--p-error);
+}
+
+body.neo[data-page="learn"] .option.incorrect .option-letter {
+  color: var(--p-panel-ink);
+}
+
+/* 已作答时，结果状态优先于「当前选中」的珊瑚色 */
+body.neo[data-page="learn"] .option.correct:has(input:checked) {
+  border-color: var(--p-ok);
+  box-shadow: inset 4px 0 0 var(--p-ok);
+}
+
+body.neo[data-page="learn"] .option.incorrect:has(input:checked) {
+  border-color: var(--p-error);
+  box-shadow: inset 4px 0 0 var(--p-error);
+}
+
+body.neo[data-page="learn"] .option input[type="radio"] {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+}
+
+body.neo[data-page="learn"] .feedback {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--p-panel-line);
+  border-left: 4px solid var(--p-error);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="learn"] .feedback.positive {
+  border-left-color: var(--p-ok);
+}
+
+body.neo[data-page="learn"] .feedback strong {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--p-cjk);
+  font-size: 14px;
+}
+
+body.neo[data-page="learn"] .feedback p {
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="learn"] .feedback .feedback-recommendation {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid var(--p-panel-line);
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="learn"] .feedback .green-tag {
+  margin-top: 9px;
+}
+
+body.neo[data-page="learn"] .result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+/* 右侧课程依据 */
+body.neo[data-page="learn"] .evidence-sidebar {
+  align-self: start;
+  min-width: 0;
+  padding-top: 50px;
+}
+
+body.neo[data-page="learn"] .evidence-card {
+  padding: 22px 20px;
+}
+
+body.neo[data-page="learn"] .evidence-card .panel-label {
+  margin-bottom: 12px;
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="learn"] .evidence-card h3 {
+  margin: 0 0 12px;
+  font-family: var(--p-cjk);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body.neo[data-page="learn"] .evidence-card blockquote {
+  margin: 0 0 14px;
+  padding: 10px 13px;
+  border-left: 3px solid var(--p-accent);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="learn"] .source-meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--p-panel-line);
+  color: var(--p-panel-muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+body.neo[data-page="learn"] .source-meta strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--p-panel-ink);
+  font-weight: 600;
+}
+
+body.neo[data-page="learn"] .evidence-card .text-link {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 12px;
+}
+
+body.neo[data-page="learn"] .evidence-note {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 0 4px;
+}
+
+body.neo[data-page="learn"] .evidence-note > span {
+  flex: none;
+  color: var(--p-accent);
+  font-size: 22px;
+  line-height: 1.2;
+  text-shadow: var(--p-text-shadow);
+}
+
+body.neo[data-page="learn"] .evidence-note p {
+  color: var(--p-on-bg-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="learn"] .session-status {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 0;
+  border-left: 3px solid var(--p-accent);
+  border-radius: 0;
+  background: var(--p-glass);
+  color: var(--p-on-bg-soft);
+  box-shadow: var(--p-shadow);
+}
+
+body.neo[data-page="learn"] .session-status .eyebrow {
+  margin-bottom: 8px;
+  color: var(--p-accent);
+  text-shadow: none;
+}
+
+body.neo[data-page="learn"] .session-status p {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0;
+  color: var(--p-on-bg-muted);
+  font-size: 11.5px;
+}
+
+body.neo[data-page="learn"] .session-status b {
+  color: var(--p-on-bg);
+  font-weight: 700;
+}
+
+/* ---------- 3. 学习记录 ---------- */
+
+body.neo[data-page="records"] .records-page {
+  padding-top: 46px;
+  padding-bottom: 64px;
+}
+
+body.neo[data-page="records"] .page-heading {
+  align-items: flex-start;
+  gap: 24px;
+}
+
+body.neo[data-page="records"] .page-heading h1 {
+  margin: 10px 0 12px;
+  font-size: clamp(30px, 3.2vw, 44px);
+}
+
+body.neo[data-page="records"] .page-heading p {
+  max-width: 62ch;
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="records"] .records-actions {
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+body.neo[data-page="records"] .records-actions .text-button {
+  color: var(--p-on-bg-soft);
+  font-size: 12.5px;
+  text-shadow: var(--p-text-shadow);
+}
+
+body.neo[data-page="records"] .records-actions .text-button:hover:not(:disabled) {
+  color: var(--p-on-bg);
+}
+
+body.neo[data-page="records"] .stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 28px 0 30px;
+  padding: 24px;
+}
+
+body.neo[data-page="records"] .stats > div {
+  min-width: 0;
+  padding: 0 22px;
+  border-right: 1px solid var(--p-panel-line);
+}
+
+body.neo[data-page="records"] .stats > div:first-child {
+  padding-left: 0;
+}
+
+body.neo[data-page="records"] .stats > div:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+body.neo[data-page="records"] .stats span {
+  display: block;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cond), var(--p-cjk);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+body.neo[data-page="records"] .stats strong {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--p-display);
+  font-size: clamp(30px, 3vw, 40px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="records"] .stats small {
+  display: inline;
+  color: var(--p-panel-muted);
+  font-family: var(--p-body);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+body.neo[data-page="records"] .empty-state {
+  padding: 46px 22px 50px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.neo[data-page="records"] .empty-state::before {
+  border-style: dashed;
+}
+
+body.neo[data-page="records"] .empty-symbol {
+  display: inline-block;
+  padding: 0 8px 2px;
+  border-bottom: 3px solid var(--p-accent);
+  color: var(--p-panel-ink);
+  font-size: 38px;
+  line-height: 1;
+}
+
+body.neo[data-page="records"] .empty-state h2 {
+  margin: 14px 0 10px;
+  font-family: var(--p-cjk);
+  font-size: 21px;
+}
+
+body.neo[data-page="records"] .empty-state p {
+  max-width: 48ch;
+  margin: 0 auto 22px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="records"] .record-list {
+  display: grid;
+  gap: 13px;
+}
+
+body.neo[data-page="records"] .record {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  padding: 20px 22px;
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel);
+  box-shadow: var(--p-shadow);
+  color: var(--p-panel-text);
+  transition: transform var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="records"] .record:hover {
+  transform: translateX(2px);
+}
+
+body.neo[data-page="records"] .record-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--p-panel-line);
+  border-left: 3px solid var(--p-error);
+  border-radius: 0;
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  font-family: var(--p-cond);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+body.neo[data-page="records"] .record-icon.positive {
+  border-left-color: var(--p-ok);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="records"] .record-body {
+  flex: 1;
+  min-width: 0;
+}
+
+body.neo[data-page="records"] .record-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+body.neo[data-page="records"] .record h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+body.neo[data-page="records"] .record p {
+  margin-top: 6px;
+  color: var(--p-panel-text);
+  font-size: 12.5px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="records"] .record small {
+  display: block;
+  margin-top: 6px;
+  color: var(--p-panel-muted);
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+
+body.neo[data-page="records"] .record details {
+  margin-top: 7px;
+}
+
+body.neo[data-page="records"] .record summary {
+  color: var(--p-panel-link);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+body.neo[data-page="records"] .record summary:hover {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="records"] .reflection-text {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--p-accent);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  font-size: 12.5px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="records"] .record > .button {
+  flex: none;
+}
+
+body.neo[data-page="records"] .privacy-note {
+  margin-top: 22px;
+  color: var(--p-on-bg-muted);
+  font-size: 11.5px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="records"] dialog,
+body.neo[data-page="chat"] dialog {
+  width: calc(100% - 36px);
+  max-width: 460px;
+  padding: 26px;
+  border: 1px solid var(--p-panel-line);
+  border-top: 4px solid var(--p-accent);
+  border-radius: var(--p-radius);
+  background: var(--p-panel);
+  color: var(--p-panel-text);
+  box-shadow: var(--p-shadow);
+}
+
+body.neo[data-page="records"] dialog::backdrop,
+body.neo[data-page="chat"] dialog::backdrop {
+  background: var(--p-glass);
+}
+
+body.neo[data-page="records"] dialog h2,
+body.neo[data-page="chat"] dialog h2 {
+  margin-bottom: 12px;
+  font-family: var(--p-cjk);
+  font-size: 21px;
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="records"] dialog p,
+body.neo[data-page="chat"] dialog p {
+  color: var(--p-panel-text);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="records"] .dialog-actions,
+body.neo[data-page="chat"] .dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+body.neo[data-page="records"] dialog button,
+body.neo[data-page="chat"] dialog button {
+  min-width: 96px;
+}
+
+body.neo[data-page="records"] dialog .button.secondary,
+body.neo[data-page="chat"] dialog .button.secondary {
+  background: var(--p-panel-2);
+  border: 1px solid var(--p-panel-line);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="records"] dialog .button.secondary:hover:not(:disabled),
+body.neo[data-page="chat"] dialog .button.secondary:hover:not(:disabled) {
+  background: var(--p-panel);
+  border-color: var(--p-accent);
+}
+
+/* ---------- 4. 关于 ---------- */
+
+body.neo[data-page="about"] .about-page {
+  padding-top: 54px;
+  padding-bottom: 70px;
+}
+
+body.neo[data-page="about"] .about-page > .eyebrow {
+  color: var(--p-accent);
+  text-shadow: var(--p-text-shadow);
+}
+
+body.neo[data-page="about"] .about-page > h1 {
+  max-width: 20ch;
+  margin: 18px 0 20px;
+  font-size: clamp(34px, 4.2vw, 58px);
+}
+
+body.neo[data-page="about"] .about-lead {
+  max-width: 64ch;
+  color: var(--p-on-bg-soft);
+  font-size: 14.5px;
+  line-height: 1.9;
+}
+
+body.neo[data-page="about"] .about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px;
+  margin-top: 34px;
+}
+
+body.neo[data-page="about"] .about-grid .panel {
+  margin-bottom: 0;
+  padding: 28px;
+}
+
+body.neo[data-page="about"] .about-grid .panel h2 {
+  margin-bottom: 14px;
+  font-family: var(--p-cjk);
+  font-size: 21px;
+  line-height: 1.4;
+}
+
+body.neo[data-page="about"] .about-grid ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--p-panel-text);
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+
+body.neo[data-page="about"] .about-grid li::marker {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="about"] .about-materials {
+  margin-top: 34px;
+  padding: 30px;
+}
+
+body.neo[data-page="about"] .about-materials .eyebrow {
+  color: var(--p-panel-link);
+  text-shadow: none;
+}
+
+body.neo[data-page="about"] .about-materials h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(24px, 2.5vw, 33px);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="about"] .about-materials > p {
+  max-width: 68ch;
+  color: var(--p-panel-text);
+  font-size: 13.5px;
+  line-height: 1.85;
+}
+
+body.neo[data-page="about"] .material-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--p-panel-line);
+  transition: background-color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="about"] .material-row:hover {
+  background: var(--p-panel-2);
+}
+
+body.neo[data-page="about"] .material-row > span:first-child {
+  flex: none;
+  min-width: 30px;
+  padding-left: 7px;
+  border-left: 3px solid var(--p-accent);
+  color: var(--p-panel-ink);
+  font-family: var(--p-display);
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+body.neo[data-page="about"] .material-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+body.neo[data-page="about"] .material-row h3 {
+  margin-bottom: 3px;
+  font-family: var(--p-cjk);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+body.neo[data-page="about"] .material-row p {
+  color: var(--p-panel-text);
+  font-size: 12.5px;
+  line-height: 1.75;
+}
+
+body.neo[data-page="about"] .material-row .tag {
+  flex: none;
+  align-self: center;
+}
+
+body.neo[data-page="about"] .about-materials .text-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+body.neo[data-page="about"] .open-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 34px;
+  padding: 28px 30px;
+}
+
+body.neo[data-page="about"] .open-banner h2 {
+  margin-bottom: 6px;
+  font-family: var(--p-cjk);
+  font-size: 21px;
+  line-height: 1.4;
+}
+
+body.neo[data-page="about"] .open-banner p {
+  color: var(--p-panel-text);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="about"] .open-banner .button.light {
+  flex: none;
+  background: var(--p-accent);
+  color: var(--p-accent-ink);
+  box-shadow: var(--p-shadow-hard);
+}
+
+body.neo[data-page="about"] .open-banner .button.light:hover {
+  background: var(--p-select);
+  color: var(--p-select-ink);
+}
+
+/* ---------- 5. AI 学习助手 · 工作台 ---------- */
+
+body.neo[data-page="chat"] .chat-layout {
+  height: calc(100dvh - var(--p-header));
+  min-height: 570px;
+}
+
+/* 左栏：会话列表 */
+body.neo[data-page="chat"] .chat-sidebar {
+  border-right: 1px solid var(--p-panel-line);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .chat-sidebar-title {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+body.neo[data-page="chat"] .chat-sidebar-title small {
+  color: var(--p-panel-muted);
+  font-family: var(--p-cond), var(--p-cjk);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+body.neo[data-page="chat"] .chat-new {
+  border: 1px solid var(--p-panel-line);
+  border-left: 3px solid var(--p-accent);
+  border-radius: var(--p-radius);
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-weight: 700;
+  box-shadow: 3px 3px 0 var(--p-panel-line);
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease),
+    transform var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .chat-new:hover {
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  transform: translateX(2px);
+}
+
+body.neo[data-page="chat"] .chat-session {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  background: transparent;
+  color: var(--p-panel-text);
+  font-size: 12px;
+}
+
+body.neo[data-page="chat"] .chat-session:hover {
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .chat-session.active {
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--p-select);
+}
+
+body.neo[data-page="chat"] .chat-session > span:first-child {
+  flex: none;
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="chat"] .chat-session.active > span:first-child {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .chat-sidebar-bottom {
+  border-top: 1px solid var(--p-panel-line);
+}
+
+body.neo[data-page="chat"] .chat-sidebar-bottom button {
+  border-radius: 0;
+  background: transparent;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cjk);
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .chat-sidebar-bottom button:hover:not(:disabled) {
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+}
+
+/* 中栏：工具栏 / 对话 / 输入 */
+body.neo[data-page="chat"] .chat-main {
+  border-left: 1px solid var(--p-panel-line);
+  background: var(--p-panel);
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .chat-toolbar {
+  border-bottom: 1px solid var(--p-panel-line);
+  background: transparent;
+}
+
+body.neo[data-page="chat"] .chat-toolbar h1 {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-weight: 800;
+}
+
+body.neo[data-page="chat"] .chat-toolbar p {
+  color: var(--p-panel-muted);
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="chat"] .toolbar-buttons {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+body.neo[data-page="chat"] .chat-toolbar .button {
+  min-height: 32px;
+  padding: 6px 10px;
+  gap: 6px;
+  font-size: 11px;
+}
+
+body.neo[data-page="chat"] .connection-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--p-error);
+  animation: none;
+  vertical-align: 1px;
+}
+
+body.neo[data-page="chat"] .connection-dot.connected {
+  background: var(--p-ok);
+}
+
+body.neo[data-page="chat"] .chat-thread {
+  background: transparent;
+  scrollbar-color: var(--p-panel-muted) transparent;
+}
+
+body.neo[data-page="chat"] .chat-welcome {
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .chat-welcome .eyebrow {
+  color: var(--p-panel-link);
+  text-shadow: none;
+}
+
+body.neo[data-page="chat"] .welcome-mark {
+  display: inline-block;
+  width: fit-content;
+  color: var(--p-panel-ink);
+  border-bottom: 3px solid var(--p-accent);
+}
+
+body.neo[data-page="chat"] .chat-welcome h2 {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+body.neo[data-page="chat"] .chat-welcome > p {
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .starter-grid button {
+  border: 1px solid var(--p-panel-line);
+  border-left: 3px solid var(--p-accent);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  box-shadow: none;
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease),
+    transform var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .starter-grid button:hover {
+  border-color: var(--p-accent);
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  transform: translateY(-1px);
+}
+
+body.neo[data-page="chat"] .starter-grid button > span {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="chat"] .starter-grid strong {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+}
+
+body.neo[data-page="chat"] .starter-grid small {
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="chat"] .chat-quick-actions {
+  flex-wrap: wrap;
+}
+
+body.neo[data-page="chat"] .chat-quick-actions button {
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  font-family: var(--p-cjk);
+  font-weight: 600;
+  box-shadow: none;
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .chat-quick-actions button:hover {
+  border-color: var(--p-accent);
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .chat-composer-wrap {
+  border-top: 1px solid var(--p-panel-line);
+  background: var(--p-panel);
+  box-shadow: none;
+}
+
+body.neo[data-page="chat"] .chat-composer {
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  box-shadow: none;
+}
+
+body.neo[data-page="chat"] .chat-composer:focus-within {
+  border-color: var(--p-accent);
+  outline: 2px solid var(--p-accent);
+  outline-offset: 2px;
+}
+
+body.neo[data-page="chat"] .chat-composer textarea,
+body.neo[data-page="chat"] .chat-composer textarea#chat-input {
+  border: 0;
+  background: transparent;
+  color: var(--p-panel-ink);
+  font-family: var(--p-body);
+  caret-color: var(--p-accent);
+}
+
+body.neo[data-page="chat"] .chat-composer textarea#chat-input:focus-visible {
+  outline: none;
+}
+
+body.neo[data-page="chat"] .composer-controls select {
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .composer-hint {
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="chat"] .chat-send {
+  border: 0;
+  border-radius: var(--p-radius);
+  background: var(--p-accent);
+  color: var(--p-accent-ink);
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease),
+    transform var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .chat-send:hover {
+  background: var(--p-select);
+  color: var(--p-select-ink);
+}
+
+body.neo[data-page="chat"] .chat-send.stop {
+  background: var(--p-error);
+  color: var(--p-select-ink);
+}
+
+body.neo[data-page="chat"] #chat-status {
+  color: var(--p-panel-muted);
+  font-size: 10.5px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+/* 消息：正文都在纸片上，用户问题再铺一层浅纸 */
+body.neo[data-page="chat"] .chat-message {
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .message-author strong {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+}
+
+body.neo[data-page="chat"] .message-author small {
+  color: var(--p-panel-muted);
+  font-size: 10.5px;
+}
+
+body.neo[data-page="chat"] .user-avatar {
+  border-radius: var(--p-radius);
+  background: var(--p-accent);
+  color: var(--p-accent-ink);
+  font-weight: 800;
+}
+
+body.neo[data-page="chat"] .user-content {
+  padding: 10px 14px;
+  border-left: 3px solid var(--p-accent);
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="chat"] .assistant-message {
+  border-top-color: var(--p-panel-line);
+}
+
+body.neo[data-page="chat"] .answer-content {
+  color: var(--p-panel-text);
+  overflow-x: auto;
+}
+
+body.neo[data-page="chat"] .prose {
+  color: var(--p-panel-text);
+  font-family: var(--p-body);
+  font-size: 14px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="chat"] .prose h1,
+body.neo[data-page="chat"] .prose h2,
+body.neo[data-page="chat"] .prose h3,
+body.neo[data-page="chat"] .prose h4 {
+  margin: 1.1em 0 0.45em;
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+body.neo[data-page="chat"] .prose h1 { font-size: 22px; }
+body.neo[data-page="chat"] .prose h2 { font-size: 19px; }
+body.neo[data-page="chat"] .prose h3 { font-size: 16.5px; }
+body.neo[data-page="chat"] .prose h4 { font-size: 14.5px; }
+
+body.neo[data-page="chat"] .prose p,
+body.neo[data-page="chat"] .prose li,
+body.neo[data-page="chat"] .prose td,
+body.neo[data-page="chat"] .prose th {
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .prose a {
+  color: var(--p-panel-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+body.neo[data-page="chat"] .prose a:hover {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .prose strong {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .prose ul,
+body.neo[data-page="chat"] .prose ol {
+  padding-left: 1.4em;
+}
+
+body.neo[data-page="chat"] .prose li::marker {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="chat"] .prose blockquote {
+  margin: 1em 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--p-accent);
+  border-radius: 0;
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .prose blockquote p {
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .prose code,
+body.neo[data-page="chat"] .prose pre {
+  font-family: var(--p-mono);
+}
+
+body.neo[data-page="chat"] .prose pre {
+  max-width: 100%;
+  margin: 1em 0;
+  padding: 13px 15px;
+  overflow-x: auto;
+  border: 1px solid var(--p-panel-line);
+  border-left: 3px solid var(--p-accent);
+  border-radius: 0;
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+body.neo[data-page="chat"] .prose pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+
+body.neo[data-page="chat"] .prose :not(pre) > code {
+  padding: 0.12em 0.38em;
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  font-size: 0.92em;
+}
+
+body.neo[data-page="chat"] .prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+body.neo[data-page="chat"] .prose th,
+body.neo[data-page="chat"] .prose td {
+  padding: 7px 10px;
+  border: 1px solid var(--p-panel-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+body.neo[data-page="chat"] .prose th {
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+  font-weight: 700;
+}
+
+body.neo[data-page="chat"] .prose hr {
+  border: 0;
+  border-top: 1px solid var(--p-panel-line);
+}
+
+body.neo[data-page="chat"] .prose .katex-display {
+  max-width: 100%;
+  margin: 1em 0;
+  padding: 10px 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-left: 3px solid var(--p-accent);
+  border-radius: 0;
+  background: var(--p-panel-2);
+}
+
+body.neo[data-page="chat"] .prose .katex {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .message-actions {
+  flex-wrap: wrap;
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="chat"] .message-actions button {
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: transparent;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cjk);
+  font-size: 11px;
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .message-actions button:hover:not(:disabled) {
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .message-actions span {
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="chat"] .turn-notice {
+  border-left: 3px solid var(--p-error);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+  overflow-wrap: anywhere;
+}
+
+body.neo[data-page="chat"] .thinking-placeholder {
+  color: var(--p-panel-muted);
+}
+
+body.neo[data-page="chat"] .thinking-placeholder > span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--p-accent);
+  animation: none;
+  opacity: 1;
+}
+
+/* 右栏：学习上下文（可读性优先，输入控件保持纸面） */
+body.neo[data-page="chat"] .chat-context {
+  border-left: 1px solid var(--p-panel-line);
+  background: var(--p-panel-2);
+  color: var(--p-panel-text);
+}
+
+body.neo[data-page="chat"] .context-title {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-weight: 800;
+}
+
+body.neo[data-page="chat"] .context-close {
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: transparent;
+  color: var(--p-panel-muted);
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .context-close:hover {
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .chat-context > label {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+body.neo[data-page="chat"] .chat-context > select {
+  width: 100%;
+  min-width: 0;
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  font-size: 12px;
+}
+
+body.neo[data-page="chat"] .context-section {
+  border-top: 1px solid var(--p-panel-line);
+}
+
+body.neo[data-page="chat"] .context-section > summary {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body.neo[data-page="chat"] .context-section > summary:hover {
+  color: var(--p-panel-link);
+}
+
+body.neo[data-page="chat"] .context-help,
+body.neo[data-page="chat"] .context-footer,
+body.neo[data-page="chat"] .context-section > small {
+  color: var(--p-panel-muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="chat"] .context-section textarea {
+  width: 100%;
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+body.neo[data-page="chat"] .context-section button:not(.button) {
+  padding: 6px 10px;
+  border: 1px solid var(--p-panel-line);
+  border-radius: var(--p-radius);
+  background: var(--p-panel);
+  color: var(--p-panel-link);
+  font-family: var(--p-cjk);
+  font-size: 11.5px;
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .context-section button:not(.button):hover:not(:disabled) {
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .evidence-item {
+  border: 1px solid var(--p-panel-line);
+  border-left: 3px solid var(--p-accent);
+  border-radius: var(--p-radius);
+  background: var(--p-panel);
+}
+
+body.neo[data-page="chat"] .evidence-item summary {
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+body.neo[data-page="chat"] .evidence-item p {
+  color: var(--p-panel-text);
+  font-size: 11.5px;
+  line-height: 1.8;
+}
+
+body.neo[data-page="chat"] .evidence-item small {
+  color: var(--p-panel-muted);
+  font-size: 10.5px;
+}
+
+body.neo[data-page="chat"] .upload-text {
+  border: 1px dashed var(--p-panel-line);
+  border-radius: var(--p-radius);
+  color: var(--p-panel-link);
+  font-size: 11.5px;
+  transition: background-color var(--p-dur) var(--p-ease), color var(--p-dur) var(--p-ease);
+}
+
+body.neo[data-page="chat"] .upload-text:hover {
+  background: var(--p-panel);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .mobile-session-actions {
+  border-bottom: 1px solid var(--p-panel-line);
+}
+
+body.neo[data-page="chat"] .mobile-session-actions button {
+  background: transparent;
+  color: var(--p-panel-muted);
+  font-family: var(--p-cjk);
+}
+
+body.neo[data-page="chat"] .mobile-session-actions button:hover {
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .hosted-banner {
+  border-bottom: 1px solid var(--p-line);
+  background: var(--p-glass);
+  color: var(--p-on-bg-soft);
+}
+
+/* 设置 / 删除会话弹窗 */
+body.neo[data-page="chat"] .connection-dialog {
+  padding: 26px;
+}
+
+body.neo[data-page="chat"] .connection-dialog label:not(.thinking-toggle) {
+  display: block;
+  margin: 12px 0 7px;
+  color: var(--p-panel-ink);
+  font-family: var(--p-cjk);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+body.neo[data-page="chat"] .connection-dialog select {
+  width: 100%;
+  background: var(--p-panel-2);
+  color: var(--p-panel-ink);
+}
+
+body.neo[data-page="chat"] .thinking-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: var(--p-panel-text);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+body.neo[data-page="chat"] #connection-result {
+  min-height: 20px;
+  margin-top: 12px;
+  color: var(--p-panel-muted);
+  font-size: 12px;
+}
+
+/* ---------- 6. 响应式 ---------- */
+
+/* 1280 附近：收一点左右留白，保证三栏不互相挤压 */
+@media (max-width: 1280px) {
+  body.neo[data-page="chat"] .ai-access {
+    padding-inline: 30px;
+  }
+
+  body.neo[data-page="learn"] .workspace {
+    gap: 22px;
+  }
+
+  body.neo[data-page="learn"] .panel {
+    padding: 23px;
+  }
+}
+
+/* 1150 及以下：右侧依据区进入双栏排布，旧布局会隐藏提示条 */
+@media (max-width: 1150px) {
+  body.neo[data-page="learn"] .course-sidebar {
+    padding: 16px;
+  }
+
+  body.neo[data-page="learn"] .evidence-sidebar {
+    padding-top: 0;
+  }
+
+  body.neo[data-page="learn"] .evidence-note {
+    display: none;
+  }
+}
+
+/* 900 及以下：练习页收成单栏；关于页卡片单列 */
+@media (max-width: 900px) {
+  body.neo[data-page="learn"] .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  body.neo[data-page="learn"] .evidence-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding-top: 0;
+  }
+
+  body.neo[data-page="learn"] .evidence-note {
+    display: none;
+  }
+
+  body.neo[data-page="learn"] .session-status {
+    margin-top: 0;
+  }
+
+  body.neo[data-page="records"] .page-heading {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  body.neo[data-page="records"] .records-actions {
+    padding-top: 0;
+  }
+
+  body.neo[data-page="about"] .about-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  body.neo[data-page="chat"] .ai-access {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 720px;
+    gap: 30px;
+    padding: 46px 34px 56px;
+  }
+
+  body.neo[data-page="chat"] .ai-access-card {
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  body.neo[data-page="chat"] .context-open .chat-context {
+    top: var(--p-header);
+    box-shadow: var(--p-shadow);
+  }
+
+  body.neo[data-page="chat"] .chat-context {
+    box-shadow: var(--p-shadow);
+  }
+}
+
+/* 760 及以下：手机布局；沿用 chat.css 的侧栏横排与上下文抽屉 */
+@media (max-width: 760px) {
+  body.neo[data-page="learn"] .course-sidebar {
+    padding: 18px 16px;
+  }
+
+  body.neo[data-page="learn"] .lesson-title {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  body.neo[data-page="learn"] .lesson-title h1 {
+    font-size: 26px;
+  }
+
+  body.neo[data-page="learn"] .panel {
+    padding: 19px;
+  }
+
+  body.neo[data-page="learn"] .question-panel h2 {
+    font-size: 21px;
+  }
+
+  body.neo[data-page="learn"] .form-bottom {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  body.neo[data-page="learn"] .hint-actions {
+    gap: 10px 14px;
+  }
+
+  body.neo[data-page="learn"] .session-status {
+    margin-top: 0;
+  }
+
+  body.neo[data-page="records"] .records-page {
+    padding-top: 34px;
+    padding-bottom: 48px;
+  }
+
+  body.neo[data-page="records"] .page-heading h1 {
+    font-size: 28px;
+  }
+
+  body.neo[data-page="about"] .about-page {
+    padding-top: 38px;
+    padding-bottom: 50px;
+  }
+
+  body.neo[data-page="about"] .about-page > h1 {
+    font-size: 34px;
+  }
+
+  body.neo[data-page="about"] .about-materials {
+    padding: 22px;
+  }
+
+  body.neo[data-page="about"] .open-banner {
+    padding: 22px;
+  }
+
+  body.neo[data-page="chat"] .chat-layout {
+    min-height: 0;
+  }
+
+  body.neo[data-page="chat"] .chat-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--p-panel-line);
+  }
+
+  body.neo[data-page="chat"] .chat-session {
+    padding: 7px 10px;
+  }
+
+  body.neo[data-page="chat"] .chat-main {
+    border-left: 0;
+  }
+
+  body.neo[data-page="chat"] .context-open .chat-context {
+    border-left: 1px solid var(--p-panel-line);
+  }
+
+  body.neo[data-page="chat"] .chat-toolbar {
+    padding-inline: 16px;
+  }
+
+  body.neo[data-page="chat"] .chat-thread {
+    padding-inline: 16px;
+  }
+
+  body.neo[data-page="chat"] .chat-composer-wrap {
+    padding-inline: 12px;
+  }
+
+  body.neo[data-page="chat"] .user-content {
+    padding: 9px 12px;
+    font-size: 13.5px;
+  }
+
+  body.neo[data-page="chat"] .prose {
+    font-size: 13.5px;
+    line-height: 1.85;
+  }
+
+  body.neo[data-page="chat"] .chat-welcome h2 {
+    font-size: 28px;
+  }
+
+  body.neo[data-page="chat"] .starter-grid button {
+    min-width: 0;
+  }
+
+  body.neo[data-page="chat"] .message-actions {
+    gap: 8px 10px;
+  }
+
+  body.neo[data-page="chat"] .message-actions button {
+    padding: 4px 8px;
+  }
+
+  body.neo[data-page="chat"] .chat-composer textarea {
+    min-height: 50px;
+    max-height: 150px;
+  }
+
+  body.neo[data-page="chat"] .ai-access {
+    padding: 34px 22px 46px;
+  }
+
+  body.neo[data-page="chat"] .ai-access-intro h1 {
+    font-size: 36px;
+    margin: 16px 0;
+  }
+
+  body.neo[data-page="chat"] .ai-access-intro p {
+    font-size: 14px;
+  }
+
+  body.neo[data-page="chat"] .ai-access-tags {
+    margin-top: 20px;
+    gap: 8px;
+  }
+
+  body.neo[data-page="chat"] .ai-access-card {
+    padding: 24px;
+  }
+}
+
+/* 680 及以下：页头换成两行，聊天工作台用略高的页头高度兜底 */
+@media (max-width: 680px) {
+  body.neo[data-page="chat"] .chat-layout {
+    height: calc(100dvh - 112px);
+  }
+
+  body.neo[data-page="chat"] .ai-access {
+    min-height: calc(100dvh - 112px);
+  }
+
+  body.neo[data-page="chat"] .context-open .chat-context {
+    top: 112px;
+  }
+}
+
+/* 600 及以下：统计与记录卡改为纵向，材料行留出标签空间 */
+@media (max-width: 600px) {
+  body.neo[data-page="records"] .stats {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px;
+  }
+
+  body.neo[data-page="records"] .stats > div,
+  body.neo[data-page="records"] .stats > div:first-child,
+  body.neo[data-page="records"] .stats > div:last-child {
+    padding: 12px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--p-panel-line);
+  }
+
+  body.neo[data-page="records"] .stats > div:last-child {
+    border-bottom: 0;
+  }
+
+  body.neo[data-page="records"] .stats strong {
+    font-size: 32px;
+  }
+
+  body.neo[data-page="records"] .record {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 17px;
+  }
+
+  body.neo[data-page="records"] .record-body {
+    flex: 1 1 220px;
+  }
+
+  body.neo[data-page="records"] .record > .button {
+    margin-left: 58px;
+  }
+
+  body.neo[data-page="about"] .material-row {
+    flex-wrap: wrap;
+  }
+
+  body.neo[data-page="about"] .material-row > div {
+    flex-basis: calc(100% - 50px);
+  }
+
+  body.neo[data-page="about"] .material-row .tag {
+    margin-left: 46px;
+  }
+
+  body.neo[data-page="about"] .open-banner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body.neo[data-page="about"] .open-banner .button.light {
+    width: 100%;
+  }
+}
+
+/* 480 及以下：进一步压缩标题与内边距，避免 375px 横向溢出 */
+@media (max-width: 480px) {
+  body.neo[data-page="learn"] .workspace {
+    padding-top: 20px;
+    padding-bottom: 38px;
+  }
+
+  body.neo[data-page="learn"] .panel {
+    padding: 16px;
+  }
+
+  body.neo[data-page="learn"] .lesson-title h1 {
+    font-size: 23px;
+  }
+
+  body.neo[data-page="learn"] .demo-notice {
+    font-size: 11.5px;
+  }
+
+  body.neo[data-page="learn"] .option {
+    align-items: flex-start;
+    padding: 10px 11px;
+    font-size: 13px;
+  }
+
+  body.neo[data-page="learn"] .result-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body.neo[data-page="records"] .page-heading h1 {
+    font-size: 25px;
+  }
+
+  body.neo[data-page="records"] .record > .button {
+    margin-left: 0;
+  }
+
+  body.neo[data-page="about"] .about-page > h1 {
+    font-size: 29px;
+  }
+
+  body.neo[data-page="about"] .about-grid .panel,
+  body.neo[data-page="about"] .about-materials {
+    padding: 18px;
+  }
+
+  body.neo[data-page="about"] .material-row .tag {
+    margin-left: 0;
+  }
+
+  body.neo[data-page="chat"] .ai-access {
+    padding: 28px 18px 38px;
+  }
+
+  body.neo[data-page="chat"] .ai-access-intro h1 {
+    font-size: 31px;
+  }
+
+  body.neo[data-page="chat"] .ai-access-card {
+    padding: 20px;
+  }
+
+  body.neo[data-page="chat"] .starter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.neo[data-page="chat"] .chat-welcome h2 {
+    font-size: 24px;
+  }
+
+  body.neo[data-page="chat"] .chat-toolbar h1 {
+    max-width: 100%;
+    font-size: 13px;
+  }
+
+  body.neo[data-page="chat"] .chat-toolbar .button {
+    max-width: none;
+  }
+
+  body.neo[data-page="chat"] .chat-toolbar {
+    gap: 6px;
+  }
+
+  body.neo[data-page="chat"] .toolbar-buttons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  body.neo[data-page="chat"] .chat-thread {
+    padding: 16px 12px;
+  }
+
+  body.neo[data-page="chat"] .chat-composer-wrap {
+    padding: 6px 10px 8px;
+  }
+
+  body.neo[data-page="chat"] .chat-quick-actions button {
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+
+  body.neo[data-page="chat"] .message-actions {
+    gap: 7px;
+  }
+
+  body.neo[data-page="chat"] .context-open .chat-context {
+    width: 100%;
+    max-width: 100vw;
+  }
+}
